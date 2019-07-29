@@ -12,6 +12,9 @@ class UserProfile(models.Model):
     profile_pic = models.TextField(null = True, blank = True,) 
     phone = models.CharField(max_length = 250, null = True, blank = True,)
     
+    def __str__(self):
+        return "{0} {1}".format((self.user.first_name).upper(), (self.user.last_name).upper())
+
     class Meta:
         db_table = 'user_profile'
 
@@ -29,6 +32,9 @@ class AppPermission(models.Model):
     user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE)
     record_access_size = models.BigIntegerField(db_index = True, default = 0,)
     full_access = models.BooleanField(db_index = True, default = False,)
+
+    def __str__(self):
+        return "{0} {1}".format((self.user.first_name).upper(), (self.user.last_name).upper())
 
     class Meta:
         db_table = 'user_app_permissions'
