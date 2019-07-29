@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-# Create your models here.
+#*********************************************************************
+# MODEL- USER PROFILE
+#*********************************************************************
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE)
@@ -13,6 +15,15 @@ class UserProfile(models.Model):
     class Meta:
         db_table = 'user_profile'
 
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+#*********************************************************************
+# MODEL - USER RECORD PERMISSIONS
+#*********************************************************************
 
 class AppPermission(models.Model):
     user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE)
@@ -24,16 +35,15 @@ class AppPermission(models.Model):
     pass
 
 
-#*********************************************************************
-# SIGNALS
-#*********************************************************************
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
 @receiver(post_save, sender=User)
 def create_app_permission(sender, instance, created, **kwargs):
     if created:
         AppPermission.objects.create(user=instance)
+
+
+#*********************************************************************
+# 
+#*********************************************************************
+
+
+
