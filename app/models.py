@@ -13,7 +13,27 @@ class UserProfile(models.Model):
     class Meta:
         db_table = 'user_profile'
 
+
+class AppPermission(models.Model):
+    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE)
+    record_access_size = models.BigIntegerField(db_index = True, default = 0,)
+    full_access = models.BooleanField(db_index = True, default = False,)
+
+    class Meta:
+        db_table = 'user_app_permissions'
+    pass
+
+
+#*********************************************************************
+# SIGNALS
+#*********************************************************************
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def create_app_permission(sender, instance, created, **kwargs):
+    if created:
+        AppPermission.objects.create(user=instance)
