@@ -28,22 +28,17 @@
                 <p style="font-size:16px; margin-bottom:5px">Data Security Portal</p>
                 <hr style="border: 1px solid #FFFFFF; margin:0px 0px 10px 0px;">
                 <small style="margin-top:4px; font-size:10px;">Powered By Django</small>
-                <!--
-                    <div class="d-flex justify-content-end social_icon">
-                        <span><i class="fab fa-facebook-square"></i></span>
-                        <span><i class="fab fa-google-plus-square"></i></span>
-                        <span><i class="fab fa-twitter-square"></i></span>
-                    </div>
-                -->
 			</div>
 			<div class="card-body">
-				<form action="" method="post" id="loginForm" novalidate>
+				<form action="{% url 'login' %}" method="post" id="loginForm">
+					{% csrf_token %}
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-user"></i></span>
 						</div>
-						{{ form.username }}						
+						{{ form.username }}					
 					</div>
+					
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-key"></i></span>
@@ -72,8 +67,8 @@
 
 $(document).ready(function(){
 
-	$("#id_username").addClass("form-control").attr("placeholder","Username");
-	$("#id_password").addClass("form-control").attr("placeholder","Password");
+	$("#id_username").addClass("form-control");
+	$("#id_password").addClass("form-control");
 
 });
 

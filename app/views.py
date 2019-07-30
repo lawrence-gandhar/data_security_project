@@ -47,3 +47,33 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 def forgot_password(request):
     template_name = 'registration/forgot_password.html'
     return render(request, template_name, {})
+
+#=========================================================================================
+#   DASHBOARD
+#=========================================================================================
+
+class Dashboard(View):
+    
+    template_name = 'app/dashboard.html'
+
+    def get(self, request):
+        return render(request, self.template_name, {})
+
+
+#=========================================================================================
+#   STAFF/USER MANAGEMENT
+#=========================================================================================
+
+class StaffManagement(ListView):
+    template_name = 'app/staff_management/index.html'
+
+    model = User
+    paginate_by = 2
+    ordering = ["id"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["css_files"] = []
+        context["js_files"] = []
+
+        return context
