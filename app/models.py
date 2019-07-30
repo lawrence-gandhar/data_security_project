@@ -3,12 +3,13 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 #*********************************************************************
 # MODEL- USER PROFILE
 #*********************************************************************
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE)
+    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE, related_name = 'profile')
     profile_pic = models.TextField(null = True, blank = True,) 
     phone = models.CharField(max_length = 250, null = True, blank = True,)
     
@@ -29,7 +30,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 #*********************************************************************
 
 class AppPermission(models.Model):
-    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE)
+    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE, related_name = 'app_permissions')
     record_access_size = models.BigIntegerField(db_index = True, default = 0,)
     full_access = models.BooleanField(db_index = True, default = False,)
 
