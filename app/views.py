@@ -109,13 +109,19 @@ class StaffManagement(View):
 #   STAFF/USER EDIT
 #=========================================================================================
 
-class EditStaff():
+class EditStaff(View):
+    template_name = 'app/staff_management/edit_staff.html'
 
-    users = user_helper.UserList() 
+    def get(self, request, *args, **kwargs):
+        user = user_helper.UserDetails(kwargs["user_id"]) 
 
-    def get(self, request):
+        if user is None:
+            return HttpResponseForbidden()
+
         return render(request, self.template_name, {
-            "users": self.users, 
-            'staff_form': EditStaffForm(),
+            'staff_form': EditStaffForm().staff, 
+            'user_profile': EditStaffForm().user_profile,
+            'app_permission':EditStaffForm.app_permission,
             'error_msg': None, 
+            'staff':user,
         })

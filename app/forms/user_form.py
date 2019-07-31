@@ -42,5 +42,6 @@ class AppPermissionForm(ModelForm):
 
 
 class EditStaffForm(Form):
+    staff = StaffForm()
     user_profile = ProfileForm()
     app_permission = AppPermission()

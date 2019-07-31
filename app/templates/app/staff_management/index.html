@@ -70,10 +70,9 @@
                                 <td class="text-center">{{ user.app_permissions__records_access }}</td>
                                 <td>0</td>
                                 <td class="text-center">
-                                    <button class="btn btn-xs btn-success" style="padding: 0.25rem 0.25rem; font-size:10px">
+                                    <a href="{% url 'edit_staff' user.id %}" class="btn btn-xs btn-success" style="padding: 0.25rem 0.25rem; font-size:10px">
                                         <i class="mdi mdi-lead-pencil"></i>
-                                    </button>
-
+                                    </a>
                                 </td>
                             </tr>
                             {% empty %}
