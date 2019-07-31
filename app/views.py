@@ -43,6 +43,8 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 # Helpers
 import app.user_helper as user_helper
 
+# Forms
+from app.forms import *
 
 #
 #***************************************************************************************
@@ -74,18 +76,10 @@ class StaffManagement(View):
     users = user_helper.UserList()      
 
     def get(self, request):
-        return render(request, self.template_name, {"users":self.users})
+        return render(request, self.template_name, 
+        {
+            "users": self.users, 
+            'staff_form': StaffForm()
+        })
 
 
-    """
-    model = User
-    paginate_by = 2
-    ordering = ["id"]
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["css_files"] = []
-        context["js_files"] = []
-
-        return context
-    """
