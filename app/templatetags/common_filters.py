@@ -56,15 +56,10 @@ def load_css_files(scripts = list()):
 @register.simple_tag
 def load_javascript_files(scripts = list()):
 
-    html = ['<script src="'+settings.STATIC_URL+'vendor/pacejs/pace.min.js'+'"></script>',
-            '<script src="'+settings.STATIC_URL+'vendor/jquery/dist/jquery.min.js'+'"></script>',
-            '<script src="'+settings.STATIC_URL+'vendor/bootstrap/js/bootstrap.min.js'+'"></script>',
-            '<script src="'+settings.STATIC_URL+'vendor/toastr/toastr.min.js'+'"></script>']
+    html = []
 
     for script in scripts:
         html.append('<script src="'+settings.STATIC_URL+script+'"></script>')
-
-    html.append('<script src="'+settings.STATIC_URL+'scripts/luna.js'+'"></script>')
         
     return safestring.mark_safe(''.join(html))
 

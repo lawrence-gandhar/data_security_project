@@ -40,6 +40,10 @@ from django.core.exceptions import ObjectDoesNotExist
 # Paginator class import
 from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnInteger
 
+# Helpers
+import app.user_helper as user_helper
+
+
 #
 #***************************************************************************************
 # Forgot Password
@@ -64,9 +68,16 @@ class Dashboard(View):
 #   STAFF/USER MANAGEMENT
 #=========================================================================================
 
-class StaffManagement(ListView):
+class StaffManagement(View):
     template_name = 'app/staff_management/index.html'
 
+    users = user_helper.UserList()      
+
+    def get(self, request):
+        return render(request, self.template_name, {"users":self.users})
+
+
+    """
     model = User
     paginate_by = 2
     ordering = ["id"]
@@ -77,3 +88,4 @@ class StaffManagement(ListView):
         context["js_files"] = []
 
         return context
+    """
