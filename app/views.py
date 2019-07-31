@@ -76,10 +76,30 @@ class StaffManagement(View):
     users = user_helper.UserList()      
 
     def get(self, request):
-        return render(request, self.template_name, 
-        {
+        return render(request, self.template_name, {
             "users": self.users, 
-            'staff_form': StaffForm()
+            'staff_form': StaffForm(),
+            'error_msg': None, 
         })
 
 
+    def post(self, request):        
+        staff = StaffForm(request.POST or None)
+
+        if staff.is_valid:
+            try:
+                staff.save()
+                return redirect('/staff-management/', 'refresh')
+            except:
+                error_msg = 'Error Occurred! Try again with valid data'
+            
+                return render(request, self.template_name, {
+                    "users": self.users, 
+                    'staff_form': StaffForm(),
+                    'error_msg' : error_msg,
+                })
+        return render(request, self.template_name, {
+            "users": self.users, 
+            'staff_form': StaffForm(),
+            'error_msg' : 'Not a valid form! Try again',
+        })
