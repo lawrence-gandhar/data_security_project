@@ -103,3 +103,19 @@ class StaffManagement(View):
             'staff_form': StaffForm(),
             'error_msg' : 'Not a valid form! Try again',
         })
+
+
+#=========================================================================================
+#   STAFF/USER EDIT
+#=========================================================================================
+
+class EditStaff():
+
+    users = user_helper.UserList() 
+
+    def get(self, request):
+        return render(request, self.template_name, {
+            "users": self.users, 
+            'staff_form': EditStaffForm(),
+            'error_msg': None, 
+        })
