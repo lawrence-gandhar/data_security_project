@@ -18,6 +18,21 @@ class StaffForm(ModelForm):
             'is_superuser': CheckboxInput(attrs={'value':'1',}),
         }
         
+class UpdateStaffForm(ModelForm):
+    
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser',)
+        widgets = {
+            'first_name': TextInput(attrs={'class':'form-control input-sm'}),
+            'last_name': TextInput(attrs={'class':'form-control input-sm'}),
+            'email': EmailInput(attrs={'class':'form-control input-sm'}), 
+            'is_active': CheckboxInput(attrs={'value':'1', 'checked':'true'}),
+            'is_staff': CheckboxInput(attrs={'value':'1',}),
+            'is_superuser': CheckboxInput(attrs={'value':'1',}),
+        }
+
+
 
 class ProfileForm(ModelForm):
 
@@ -34,14 +49,10 @@ class AppPermissionForm(ModelForm):
     
     class Meta:
         model = AppPermission
-        fields = ('record_access_size', 'full_access')
+        fields = ('record_access_size', 'full_access', 'read_only_mode')
         widgets = {
+            'read_only_mode': CheckboxInput(attrs={'value':'1',}),
             'record_access_size': TextInput(attrs={'class':'form-control input-sm'}),
             'full_access': CheckboxInput(attrs={'value':'1',}),
         }
 
-
-class EditStaffForm(Form):
-    staff = StaffForm()
-    user_profile = ProfileForm()
-    app_permission = AppPermission()

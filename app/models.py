@@ -33,6 +33,7 @@ class AppPermission(models.Model):
     user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE, related_name = 'app_permissions')
     record_access_size = models.BigIntegerField(db_index = True, default = 0,)
     full_access = models.BooleanField(db_index = True, default = False,)
+    read_only_mode = models.BooleanField(db_index = True, default = True,)
 
     def __str__(self):
         return "{0} {1}".format((self.user.first_name).upper(), (self.user.last_name).upper())

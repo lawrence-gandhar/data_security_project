@@ -46,6 +46,7 @@ import app.user_helper as user_helper
 # Forms
 from app.forms import *
 
+
 #
 #***************************************************************************************
 # Forgot Password
@@ -86,8 +87,9 @@ class StaffManagement(View):
     def post(self, request):        
         staff = StaffForm(request.POST or None)
 
-        if staff.is_valid:
+        if staff.is_valid():
             try:
+                staff.full_clean()
                 staff.save()
                 return redirect('/staff-management/', 'refresh')
             except:
@@ -113,15 +115,61 @@ class EditStaff(View):
     template_name = 'app/staff_management/edit_staff.html'
 
     def get(self, request, *args, **kwargs):
-        user = user_helper.UserDetails(kwargs["user_id"]) 
+        user = user_helper.UserDetailsObject(kwargs["user_id"]) 
 
         if user is None:
             return HttpResponseForbidden()
 
+        staff_form  = UpdateStaffForm(instance = user, prefix='staff')
+
+        try:
+            app_permission = AppPermissionForm(instance = user.app_permissions, prefix='perms')
+        except:
+            perms = AppPermission.objects.create(user=user)
+            perms = perms.refresh_from_db()
+            app_permission = AppPermissionForm(instance = perms, prefix='perms')
+
+        try:
+            user_profile = ProfileForm(instance = user.profile, prefix='profile')
+        except:
+            profile = UserProfile.objects.create(user=user)
+            profile = profile.refresh_from_db()
+            user_profile = ProfileForm(instance = profile, prefix='profile')
+
         return render(request, self.template_name, {
-            'staff_form': EditStaffForm().staff, 
-            'user_profile': EditStaffForm().user_profile,
-            'app_permission':EditStaffForm.app_permission,
+            'staff_form': staff_form, 
+            'user_profile': user_profile,
+            'app_permission':app_permission,
             'error_msg': None, 
             'staff':user,
         })
+
+
+    def post(self, request, *args, **kwargs):
+
+        user = user_helper.UserDetailsObject(kwargs["user_id"]) 
+
+        if user is None:
+            return HttpResponseForbidden()
+
+        staff_form = UpdateStaffForm(request.POST or None, instance = user, prefix='staff')
+        user_profile = ProfileForm(request.POST or None, instance = user.profile, prefix='profile')
+        app_permission = AppPermissionForm(request.POST or None, instance = user.app_permissions, prefix='perms')
+
+        if staff_form.is_valid() and user_profile.is_valid():
+            staff_form.full_clean()
+            staff = staff_form.save()
+            staff.profile = user_profile.save()
+            staff.app_permissions = app_permission.save()
+            return redirect('/staff-management/', parmanent = True)
+        else:
+            return render(request, self.template_name, {
+                'staff_form': staff_form, 
+                'user_profile': user_profile,
+                'app_permission':app_permission,
+                'error_msg': None, 
+                'staff':user,
+            })
+
+        
+        
