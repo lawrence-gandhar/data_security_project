@@ -74,11 +74,9 @@ class Dashboard(View):
 class StaffManagement(View):
     template_name = 'app/staff_management/index.html'
 
-    users = user_helper.UserList()      
-
     def get(self, request):
         return render(request, self.template_name, {
-            "users": self.users, 
+            "users": user_helper.UserList(), 
             'staff_form': StaffForm(),
             'error_msg': None, 
         })
@@ -96,12 +94,12 @@ class StaffManagement(View):
                 error_msg = 'Error Occurred! Try again with valid data'
             
                 return render(request, self.template_name, {
-                    "users": self.users, 
+                    "users": user_helper.UserList(), 
                     'staff_form': StaffForm(),
                     'error_msg' : error_msg,
                 })
         return render(request, self.template_name, {
-            "users": self.users, 
+            "users": user_helper.UserList(), 
             'staff_form': StaffForm(),
             'error_msg' : 'Not a valid form! Try again',
         })
@@ -158,9 +156,10 @@ class EditStaff(View):
 
         if staff_form.is_valid() and user_profile.is_valid():
             staff_form.full_clean()
-            staff = staff_form.save()
+            staff = staff_form.save(commit = False)
             staff.profile = user_profile.save()
             staff.app_permissions = app_permission.save()
+            staff.save()
             return redirect('/staff-management/', parmanent = True)
         else:
             return render(request, self.template_name, {
