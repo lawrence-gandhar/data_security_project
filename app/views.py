@@ -75,8 +75,12 @@ class StaffManagement(View):
     template_name = 'app/staff_management/index.html'
 
     def get(self, request):
+
+        page = request.GET.get('page',1)
+        records_per_page = request.GET.get('per_page',None)
+
         return render(request, self.template_name, {
-            "users": user_helper.UserList(), 
+            "users": user_helper.UserList(page,records_per_page), 
             'staff_form': StaffForm(),
             'error_msg': None, 
         })

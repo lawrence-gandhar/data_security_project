@@ -2,8 +2,42 @@
 {% load static %}
 
 {% load common_filters %}
+{% load pagination %}
 
 {% block content %}
+
+<style>
+.btn-default{color:#FFFFFF !important;}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 50px;
+    padding: 0;
+    margin: 0.125rem 0 0;
+    font-size: 11px;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fed713;
+    border-color: #fed713 1px solid;
+    background-clip: padding-box;
+    border: 1px solid #ebedf2;
+    border-radius: 0px; 
+}
+
+.dropdown-menu li:hover{     
+    background-color: #eac301;
+    border-color: #ddb901; 
+}
+
+
+</style>
+
 <div class="main-panel">          
     <div class="content-wrapper">
         {% if error_msg is not None %}
@@ -17,18 +51,27 @@
 
         <div class="page-header" style="margin-bottom:10px;">
             <h3 class="page-title">Staff Management</h3>
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2">
                     <div class="input-group-append">
                         <button class="btn btn-success btn-xs" type="button">Search</button>
                         <button class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-target="#AddUser">Add User</button>
+                    
+                        <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Show <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="text-center"><a style="display: block;" href="?per_page=1">1</a></li>
+                            <li class="text-center"><a style="display: block;" href="?per_page=2">2</a></li>
+                            <li class="text-center"><a style="display: block;" href="?per_page=3">3</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>   
         </div>
         <div class="row">
-            <div class="col-12 grid-margin stretch-card" style="padding:0px 9px 0px 0px;">
+            <div class="col-12 grid-margin stretch-card" style="padding:0px 0px; margin-bottom:10px">
                 <div class="card">
                     <div class="card-body" style="overflow-x:scroll">
                         <table class="table table-bordered table-stripped" style="margin-bottom:0px;font-size:85%">
@@ -88,10 +131,17 @@
                                 <td colspan="50">No Records</td>
                             </tr>
                             {% endfor %}
-                        </table>
+                        </table>                        
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            {% if users.paginator.count > 0 %}
+            <div class="col-md-12 pagination text-center">
+                {% paginate users request.META.QUERY_STRING %}             
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
