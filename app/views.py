@@ -29,6 +29,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 
 # Django Messaging Framework
 from django.contrib import messages
@@ -90,18 +91,13 @@ class StaffManagement(View):
         staff = StaffForm(request.POST or None)
 
         if staff.is_valid():
-            try:
-                staff.full_clean()
-                staff.save()
-                return redirect('/staff-management/', 'refresh')
-            except:
-                error_msg = 'Error Occurred! Try again with valid data'
-            
-                return render(request, self.template_name, {
-                    "users": user_helper.UserList(), 
-                    'staff_form': StaffForm(),
-                    'error_msg' : error_msg,
-                })
+            staff.full_clean()
+            user = staff.save(commit=False)
+            user.password = make_password(staff.cleaned_data['password'])
+            user.save()
+
+            return redirect('/staff-management/', 'refresh')
+
         return render(request, self.template_name, {
             "users": user_helper.UserList(), 
             'staff_form': StaffForm(),
@@ -117,24 +113,24 @@ class EditStaff(View):
     template_name = 'app/staff_management/edit_staff.html'
 
     def get(self, request, *args, **kwargs):
-        user = user_helper.UserDetailsObject(kwargs["user_id"]) 
+        staff = user_helper.UserDetailsObject(kwargs["user_id"]) 
 
-        if user is None:
+        if staff is None:
             return HttpResponseForbidden()
 
-        staff_form  = UpdateStaffForm(instance = user, prefix='staff')
+        staff_form  = UpdateStaffForm(instance = staff, prefix='staff')
 
         try:
-            app_permission = AppPermissionForm(instance = user.app_permissions, prefix='perms')
+            app_permission = AppPermissionForm(instance = staff.app_permissions, prefix='perms')
         except:
-            perms = AppPermission.objects.create(user=user)
+            perms = AppPermission.objects.create(user=staff)
             perms = perms.refresh_from_db()
             app_permission = AppPermissionForm(instance = perms, prefix='perms')
 
         try:
-            user_profile = ProfileForm(instance = user.profile, prefix='profile')
+            user_profile = ProfileForm(instance = staff.profile, prefix='profile')
         except:
-            profile = UserProfile.objects.create(user=user)
+            profile = UserProfile.objects.create(user=staff)
             profile = profile.refresh_from_db()
             user_profile = ProfileForm(instance = profile, prefix='profile')
 
@@ -143,7 +139,7 @@ class EditStaff(View):
             'user_profile': user_profile,
             'app_permission':app_permission,
             'error_msg': None, 
-            'staff':user,
+            'staff':staff,
         })
 
 
@@ -155,10 +151,10 @@ class EditStaff(View):
             return HttpResponseForbidden()
 
         staff_form = UpdateStaffForm(request.POST or None, instance = user, prefix='staff')
-        user_profile = ProfileForm(request.POST or None, instance = user.profile, prefix='profile')
+        user_profile = ProfileForm(request.POST or None,  request.FILES or None, instance = user.profile, prefix='profile')
         app_permission = AppPermissionForm(request.POST or None, instance = user.app_permissions, prefix='perms')
 
-        if staff_form.is_valid() and user_profile.is_valid():
+        if staff_form.is_valid() and user_profile.is_valid() and app_permission.is_valid():
             staff_form.full_clean()
             staff = staff_form.save(commit = False)
             staff.profile = user_profile.save()

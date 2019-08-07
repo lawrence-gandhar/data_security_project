@@ -40,7 +40,7 @@ class ProfileForm(ModelForm):
         model = UserProfile
         fields = ('profile_pic', 'phone')
         widgets = {
-            'profile_pic': FileInput(attrs={'class':'form-control input-sm'}),
+            'profile_pic': FileInput(attrs={'class':'form-control input-sm', 'required':False, 'style':'line-height: 14px; font-size: 10px; padding: 4px 5px;'}),
             'phone': TextInput(attrs={'class':'form-control input-sm'}),
         }
 

@@ -8,7 +8,7 @@ def UserList(page = None, records_per_page = None):
     users = users.values('id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser', 'is_active', 
             'app_permissions__record_access_size', 'app_permissions__full_access', 'app_permissions__read_only_mode',
             'profile__profile_pic', 'profile__phone',
-        ) 
+        )
 
     per_page = 25
     if records_per_page is not None:

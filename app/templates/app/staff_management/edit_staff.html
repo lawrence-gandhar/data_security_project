@@ -25,7 +25,7 @@
                         Add User
                     </div>
                     <div class="card-body">
-                        <form method="post">
+                        <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}  
                             <div class="row">
                                 <div class="col-8"> 
@@ -68,6 +68,11 @@
                                 </div>  
                                 <div class="col-4" style="border-left:1px solid #eeeeee">   
                                     <table class="table table-responsive">
+                                        <tr>
+                                            <td class="text-center" colspan="2">
+                                                <img style="width:100px; height:100px; border-radius:0px;" src="/media/{{staff.profile.profile_pic}}"  alt="{{staff.first_name|upper|safe}} {{staff.last_name|upper|safe}}">
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td><label for="id_is_active">Is-Active</label></td>
                                             <td width="100px" class="text-center">{{staff_form.is_active}}</td>

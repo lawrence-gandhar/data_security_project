@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
 from app.views import *
 from django.views.generic.base import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 
 urlpatterns = [

@@ -10,7 +10,7 @@ from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE, related_name = 'profile')
-    profile_pic = models.TextField(null = True, blank = True,) 
+    profile_pic = models.ImageField(upload_to='profiles/', null = True, blank = True, )
     phone = models.CharField(max_length = 250, null = True, blank = True,)
     
     def __str__(self):

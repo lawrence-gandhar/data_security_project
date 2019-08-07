@@ -92,15 +92,15 @@
                             </thead>
                             {% for user in users %}
                             <tr>
-                                <td class="text-center" width="60px">                                    
+                                <td class="text-center" width="60px">                             
                                     {% if user.profile__profile_pic is not None %}
-                                        {% if user.profile__profile.pic is null %}
+                                        {% if user.profile__profile_pic is null %}
                                             <div class="nav-profile-img">
                                                 <img src="/static/images/faces/face1.jpg" alt="{{user.first_name|upper|safe}} {{user.last_name|upper|safe}}">         
                                             </div>
                                         {% else %}
                                             <div class="nav-profile-img">
-                                                <img src="{{user.profile__profile_pic|safe}}"  alt="{{user.first_name|upper|safe}} {{user.last_name|upper|safe}}">
+                                                <img src="/media/{{user.profile__profile_pic|safe}}"  alt="{{user.first_name|upper|safe}} {{user.last_name|upper|safe}}">
                                             </div>
                                         {% endif %} 
                                     {% else %}
