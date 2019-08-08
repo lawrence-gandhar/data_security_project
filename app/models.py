@@ -40,7 +40,7 @@ class AppPermission(models.Model):
 
     class Meta:
         db_table = 'user_app_permissions'
-    pass
+    
 
 
 @receiver(post_save, sender=User)
@@ -50,8 +50,41 @@ def create_app_permission(sender, instance, created, **kwargs):
 
 
 #*********************************************************************
-# 
+# MODEL - CATEGORY 
 #*********************************************************************
 
+class Category(models.Model):
 
+    category_name = models.CharField(max_length = 250, blank = False, null = False)
+    category_is_parent = models.BooleanField(db_index = True, default = True)
+    category_parent_id = models.ForeignKey('self', db_index = True, on_delete = models.CASCADE)
+    is_active = models.BooleanField(default = True, db_index = True)
 
+    def __str__(self):
+        return "{0}".format(self.category_name.title())
+
+    class Meta:
+        db_table = 'category_tbl'
+    
+
+#*********************************************************************
+# MODEL - FILE SUBMISSIONS 
+#*********************************************************************
+
+class FileSubmission(models.Model):
+
+    record_file_name = models.FileField(upload_to='records/', blank = False, null = False)    
+    is_active = models.BooleanField(db_index = True, default = True,)
+    uploaded_by = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL )
+    uploaded_on = models.DateTimeField(auto_now_add = True, db_index = True)
+
+    def __str__(self):
+        return "{0}".format(self.record_file_name.title())
+
+    class Meta:
+        db_table = 'file_submission_tbl'
+    
+
+#
+# 
+#         

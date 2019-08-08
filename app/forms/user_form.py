@@ -1,5 +1,4 @@
 from django.forms import *
-
 from app.models import *
 
 class StaffForm(ModelForm):

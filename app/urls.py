@@ -15,4 +15,5 @@ urlpatterns = [
     re_path(r'^accounts/*', RedirectView.as_view(pattern_name='login', permanent=True)),
     path('staff-management/',login_required(StaffManagement.as_view()), name = "staff_management"),
     path('edit-staff/<int:user_id>/', login_required(EditStaff.as_view()), name='edit_staff'),
+    path('record-management/',login_required(RecordManagement.as_view()), name = "record_management"),
 ]

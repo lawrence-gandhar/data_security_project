@@ -171,4 +171,44 @@ class EditStaff(View):
             })
 
         
-        
+
+#=========================================================================================
+#   RECORD MANAGEMENT
+#=========================================================================================
+
+class RecordManagement(View):
+    template_name = 'app/record_management/index.html'
+    msg = ''
+
+    def get(self, request, *args, **kwargs):   
+
+        return render(request, self.template_name, {
+            "file_submission_form" : FileSubmissionForm(),
+        })     
+
+    def post(self, request, *args, **kwargs):
+
+        file_submission_form = FileSubmissionForm(request.POST or None, request.FILES or None, instance = request.user)
+
+        if file_submission_form.is_valid():
+            ins = file_submission_form.save()
+            ins = ins.refresh_from_db()
+
+            if ins.is_active:
+                self.msg = "File Uploaded Successfully and loaded"
+            else:
+                self.msg = "File Uploaded Successfully, but did not load the data since the file uploaded is inactive. \
+                <br>Please activate the file to show it in the 'Select Record File Section'. If its the last uploaded \
+                file then the data will be automatically loaded once its set to active state, else you have to load the \
+                data by selecting the file from 'Select Record File' and then click the 'Load Data' button."
+
+            return render(request, self.template_name, {
+                "file_submission_form" : FileSubmissionForm(),
+                "error_msg" : self.msg,
+            })
+
+        self.msg = file_submission_form.errors  
+        return render(request, self.template_name, {
+            "file_submission_form" : FileSubmissionForm(),
+            "error_msg" : self.msg,
+        })

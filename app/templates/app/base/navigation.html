@@ -32,14 +32,14 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'staff_management' %}">
+          <a class="nav-link" href="{% url 'record_management' %}">
             <span class="menu-title">Records Management</span>
             <i class="mdi mdi-format-list-bulleted menu-icon"></i>
           </a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="index.html">
+          <a class="nav-link" href="{% url 'staff_management' %}">
             <span class="menu-title">My Records</span>
             <i class="mdi mdi-format-list-bulleted menu-icon"></i>
           </a>
