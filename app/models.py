@@ -75,7 +75,6 @@ class FileSubmission(models.Model):
 
     record_file_name = models.FileField(upload_to='records/', blank = False, null = False)    
     is_active = models.BooleanField(db_index = True, default = True,)
-    uploaded_by = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL )
     uploaded_on = models.DateTimeField(auto_now_add = True, db_index = True)
 
     def __str__(self):

@@ -188,11 +188,12 @@ class RecordManagement(View):
 
     def post(self, request, *args, **kwargs):
 
-        file_submission_form = FileSubmissionForm(request.POST or None, request.FILES or None, instance = request.user)
+        file_submission_form = FileSubmissionForm(request.POST or None, request.FILES or None)
+
+        print(request.FILES)
 
         if file_submission_form.is_valid():
             ins = file_submission_form.save()
-            ins = ins.refresh_from_db()
 
             if ins.is_active:
                 self.msg = "File Uploaded Successfully and loaded"
@@ -201,6 +202,7 @@ class RecordManagement(View):
                 <br>Please activate the file to show it in the 'Select Record File Section'. If its the last uploaded \
                 file then the data will be automatically loaded once its set to active state, else you have to load the \
                 data by selecting the file from 'Select Record File' and then click the 'Load Data' button."
+            
 
             return render(request, self.template_name, {
                 "file_submission_form" : FileSubmissionForm(),

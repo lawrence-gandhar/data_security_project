@@ -56,7 +56,7 @@
                     <input style="border-radius: 0px;" type="text" class="form-control" placeholder="Record" aria-label="Username" aria-describedby="basic-addon2">
                     <div class="input-group-append">
                         <button class="btn btn-success btn-xs" type="button" style="width: 70px;">Search</button>
-                        <button class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-target="#AddUser" style="width: 70px;">Upload</button>
+                        <button class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-target="#FileSubmission" style="width: 70px;">Upload</button>
                     
                         <button  style="border-radius: 0px; width: 70px;" type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown">
                             Show <span class="caret"></span>
@@ -121,7 +121,7 @@
 
 <!-- ADD FILE SUBMISSION MODAL -->
 
-<div class="modal fade" id="AddUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="FileSubmission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -130,14 +130,14 @@
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                 <div class="modal-body">            
                     <div class="card-body">                    
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                <label for="id_username">Records Filename</label>
+                                <label for="id_record_file_name">Records Filename</label>
                                 {{file_submission_form.record_file_name}}
                                 </div>
                             </div>
