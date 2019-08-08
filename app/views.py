@@ -190,8 +190,6 @@ class RecordManagement(View):
 
         file_submission_form = FileSubmissionForm(request.POST or None, request.FILES or None)
 
-        print(request.FILES)
-
         if file_submission_form.is_valid():
             ins = file_submission_form.save()
 
@@ -199,9 +197,9 @@ class RecordManagement(View):
                 self.msg = "File Uploaded Successfully and loaded"
             else:
                 self.msg = "File Uploaded Successfully, but did not load the data since the file uploaded is inactive. \
-                <br>Please activate the file to show it in the 'Select Record File Section'. If its the last uploaded \
-                file then the data will be automatically loaded once its set to active state, else you have to load the \
-                data by selecting the file from 'Select Record File' and then click the 'Load Data' button."
+                <br><br/>Please activate the file to show it in the 'Select Records File'. If its the latest and its inactive \
+                file then the data will be automatically loaded from the previously uploaded file, else you have to load the \
+                data by selecting the latest file from 'Select Records File' and then click the 'Load Data' button."
             
 
             return render(request, self.template_name, {
