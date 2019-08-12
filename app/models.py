@@ -78,7 +78,7 @@ class Category(models.Model):
 
     category_name = models.CharField(max_length = 250, blank = False, null = False, unique = True,)
     category_is_parent = models.BooleanField(db_index = True, default = True)
-    category_parent_id = models.ForeignKey('self', db_index = True, on_delete = models.CASCADE)
+    category_parent_id = models.ForeignKey('self', db_index = True, on_delete = models.SET_NULL, null = True, blank = True,)
     is_active = models.BooleanField(default = True, db_index = True)
 
     def __str__(self):
@@ -94,11 +94,11 @@ class Category(models.Model):
 #*********************************************************************
 
 class Brand(models.Model):
-    name = models.CharField(max_length = 250, unique = True, blank = False, null = False,)
+    brand_name = models.CharField(max_length = 250, unique = True, blank = False, null = False,)
     is_active = models.BooleanField(db_index = True, default = True)
 
     def __str__(self):
-        return "{0}".format(self.name)
+        return "{0}".format(self.brand_name)
 
     class Meta:
         db_table = 'brands_tbl'
@@ -109,7 +109,7 @@ class Brand(models.Model):
 #*********************************************************************
 
 class RecordsManagement(models.Model):
-    record_file = models.OneToOneField(FileSubmission, on_delete = models.CASCADE, db_index = True,)
+    record_file = models.OneToOneField(FileSubmission, null = True, blank = True, on_delete = models.SET_NULL, db_index = True,)
     is_active = models.BooleanField(db_index = True, default = True)
     category = models.OneToOneField(Category, blank = True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_category') 
     sub_category = models.OneToOneField(Category, blank =True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_sub_category')
