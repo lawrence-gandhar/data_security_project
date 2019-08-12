@@ -43,6 +43,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 
 # Helpers
 import app.user_helper as user_helper
+import app.records_helper as records_helper
 
 # Forms
 from app.forms import *
@@ -192,6 +193,10 @@ class RecordManagement(View):
 
         if file_submission_form.is_valid():
             ins = file_submission_form.save()
+
+            records_helper.insert_into_db(ins.filename())
+            
+
 
             if ins.is_active:
                 self.msg = "File Uploaded Successfully and loaded"

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import os, sys
 
 
 #*********************************************************************
@@ -50,24 +51,6 @@ def create_app_permission(sender, instance, created, **kwargs):
 
 
 #*********************************************************************
-# MODEL - CATEGORY 
-#*********************************************************************
-
-class Category(models.Model):
-
-    category_name = models.CharField(max_length = 250, blank = False, null = False)
-    category_is_parent = models.BooleanField(db_index = True, default = True)
-    category_parent_id = models.ForeignKey('self', db_index = True, on_delete = models.CASCADE)
-    is_active = models.BooleanField(default = True, db_index = True)
-
-    def __str__(self):
-        return "{0}".format(self.category_name.title())
-
-    class Meta:
-        db_table = 'category_tbl'
-    
-
-#*********************************************************************
 # MODEL - FILE SUBMISSIONS 
 #*********************************************************************
 
@@ -80,10 +63,60 @@ class FileSubmission(models.Model):
     def __str__(self):
         return "{0}".format(self.record_file_name.title())
 
+    def filename(self):
+        return "/records/"+os.path.basename(self.record_file_name.name)
+
     class Meta:
         db_table = 'file_submission_tbl'
     
 
-#
-# 
-#         
+#*********************************************************************
+# MODEL - CATEGORY 
+#*********************************************************************
+
+class Category(models.Model):
+
+    category_name = models.CharField(max_length = 250, blank = False, null = False, unique = True,)
+    category_is_parent = models.BooleanField(db_index = True, default = True)
+    category_parent_id = models.ForeignKey('self', db_index = True, on_delete = models.CASCADE)
+    is_active = models.BooleanField(default = True, db_index = True)
+
+    def __str__(self):
+        return "{0}".format(self.category_name.title())
+
+    class Meta:
+        db_table = 'category_tbl'
+    
+
+
+#*********************************************************************
+# MODEL - BRANDS 
+#*********************************************************************
+
+class Brand(models.Model):
+    name = models.CharField(max_length = 250, unique = True, blank = False, null = False,)
+    is_active = models.BooleanField(db_index = True, default = True)
+
+    def __str__(self):
+        return "{0}".format(self.name)
+
+    class Meta:
+        db_table = 'brands_tbl'
+
+
+#*********************************************************************
+# MODEL - RECORDS MANAGEMENT 
+#*********************************************************************
+
+class RecordsManagement(models.Model):
+    record_file = models.OneToOneField(FileSubmission, on_delete = models.CASCADE, db_index = True,)
+    is_active = models.BooleanField(db_index = True, default = True)
+    category = models.OneToOneField(Category, blank = True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_category') 
+    sub_category = models.OneToOneField(Category, blank =True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_sub_category')
+    brand = models.OneToOneField(Brand, db_index = True, blank = True, null = True, on_delete = models.SET_NULL) 
+    contact_person = models.CharField(max_length = 250, blank = True, null = True, )
+    contact_number = models.CharField(max_length = 250, blank = True, null = True, )
+    email = models.CharField(max_length = 250, blank = True, null = True, )
+
+    class Meta:
+        db_table = 'records_tbl'
