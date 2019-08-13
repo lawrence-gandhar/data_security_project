@@ -96,7 +96,7 @@ class Category(models.Model):
 class Brand(models.Model):
     brand_name = models.CharField(max_length = 250, unique = True, blank = False, null = False,)
     is_active = models.BooleanField(db_index = True, default = True)
-
+    
     def __str__(self):
         return "{0}".format(self.brand_name)
 
@@ -109,11 +109,11 @@ class Brand(models.Model):
 #*********************************************************************
 
 class RecordsManagement(models.Model):
-    record_file = models.OneToOneField(FileSubmission, null = True, blank = True, on_delete = models.SET_NULL, db_index = True,)
+    record_file = models.ForeignKey(FileSubmission, null = True, blank = True, on_delete = models.SET_NULL, db_index = True,)
     is_active = models.BooleanField(db_index = True, default = True)
-    category = models.OneToOneField(Category, blank = True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_category') 
-    sub_category = models.OneToOneField(Category, blank =True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_sub_category')
-    brand = models.OneToOneField(Brand, db_index = True, blank = True, null = True, on_delete = models.SET_NULL) 
+    category = models.ForeignKey(Category, blank = True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_category') 
+    sub_category = models.ForeignKey(Category, blank =True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_sub_category')
+    brand = models.ForeignKey(Brand, db_index = True, blank = True, null = True, on_delete = models.SET_NULL) 
     contact_person = models.CharField(max_length = 250, blank = True, null = True, )
     contact_number = models.CharField(max_length = 250, blank = True, null = True, )
     email = models.CharField(max_length = 250, blank = True, null = True, )

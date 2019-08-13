@@ -194,10 +194,8 @@ class RecordManagement(View):
         if file_submission_form.is_valid():
             ins = file_submission_form.save()
 
-            records_helper.insert_into_db(ins.filename())
+            rec_msg = records_helper.insert_into_db(ins, ins.filename())
             
-
-
             if ins.is_active:
                 self.msg = "File Uploaded Successfully and loaded"
             else:
@@ -206,11 +204,9 @@ class RecordManagement(View):
                 file then the data will be automatically loaded from the previously uploaded file, else you have to load the \
                 data by selecting the latest file from 'Select Records File' and then click the 'Load Data' button."
             
+            messages.add_message(request, messages.INFO, self.msg + "<br>"+rec_msg)
 
-            return render(request, self.template_name, {
-                "file_submission_form" : FileSubmissionForm(),
-                "error_msg" : self.msg,
-            })
+            return redirect('/record-management/',)
 
         self.msg = file_submission_form.errors  
         return render(request, self.template_name, {
