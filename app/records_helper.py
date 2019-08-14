@@ -22,7 +22,6 @@ def insert_into_db(file_ins, file_path):
 
     msg = "Total Rows: {0}, Total Columns: {1}".format(total_rows- 1 , total_columns)
 
-    
     # Loop will print all columns name 
     for row in range(2, total_rows + 1): 
 
@@ -103,10 +102,20 @@ def category_sub_brand_insertion(category, sub_category, brand):
     except IntegrityError: 
         brand_ins = Brand.objects.get(brand_name = brand.strip())
     
-
     return cat, sub_cat, brand_ins
 
 
+def RecordsList():
+    file_ins = FileSubmission.objects.exclude(is_active = False).latest('id')
+
+    records = RecordsManagement.objects.filter(record_file = file_ins)
+    records = records.select_related('category', 'sub_category','brand', 'record_file')
+    records = records.values('category__category_name', 'sub_category__category_name', 'brand__brand_name', 
+                'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on')
+
+            
+    print(records)
+    return records
 
 
 

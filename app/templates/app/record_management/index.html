@@ -106,6 +106,7 @@
                         <table class="table table-bordered table-stripped" style="margin-bottom:0px;font-size:85%">
                             <thead class="text-center">
                                 <td style="padding:10px;"></td>
+                                <td style="padding:10px;">Is Active</td>
                                 <td style="padding:10px;">Industry</td>
                                 <td style="padding:10px;">Sub Industry</td>
                                 <td style="padding:10px;">Brand Name</td>
@@ -119,6 +120,26 @@
                                 <td style="padding:10px;">Remarked On</td>
                                 <td style="padding:10px;">Action</td>
                             </thead>
+                            <tbody>
+                                {% for rec in records %}
+                                    <tr>
+                                        <td></td>
+                                        <td class="text-center">{% tick_mark rec.is_active %}</td>
+                                        <td>{{ rec.category__category_name|title|safe }}</td>
+                                        <td>{{ rec.sub_category__category_name|title|safe }}</td>
+                                        <td>{{ rec.brand__brand_name|title|safe }}</td>
+                                        <td>{{ rec.contact_person|title|safe }}</td>
+                                        <td>{{ rec.contact_number|safe }}</td>
+                                        <td>{{ rec.email|safe }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
+                                        <td></td>
+                                        <td>abcd</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
                         </table>
                     </div>
                 </div>

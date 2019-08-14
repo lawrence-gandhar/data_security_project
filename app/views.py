@@ -183,8 +183,11 @@ class RecordManagement(View):
 
     def get(self, request, *args, **kwargs):   
 
+        records = records_helper.RecordsList()
+
         return render(request, self.template_name, {
             "file_submission_form" : FileSubmissionForm(),
+            "records" : records,
         })     
 
     def post(self, request, *args, **kwargs):

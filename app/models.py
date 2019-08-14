@@ -61,7 +61,7 @@ class FileSubmission(models.Model):
     uploaded_on = models.DateTimeField(auto_now_add = True, db_index = True)
 
     def __str__(self):
-        return "{0}".format(self.record_file_name.title())
+        return "{0}".format(self.record_file_name)
 
     def filename(self):
         return "/records/"+os.path.basename(self.record_file_name.name)
