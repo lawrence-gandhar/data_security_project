@@ -35,6 +35,10 @@
     border-color: #ddb901; 
 }
 
+select.form-control{
+    color:#000000;
+}
+
 
 </style>
 
@@ -72,9 +76,10 @@
                             Show <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=1">1</a></li>
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=2">2</a></li>
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=3">3</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=25">25</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=50">50</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=100">100</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=200">200</a></li>
                         </ul>
                     </div>
                 </div>
@@ -93,11 +98,13 @@
                                         Select Records File
                                     </label>
                                     <div class="col-8 input-group">
-                                        <select style="border-radius: 0px;" class="form-control">
-                                            <option></option>
+                                        <select style="border-radius: 0px;" class="form-control" id="load_data_opt">
+                                            {% for records_file in records_file_list %}
+                                                <option {% if file_ins == records_file.id %} selected {% endif %} value="{{ records_file.id }}">{{ records_file.record_file_name }}</option>
+                                            {% endfor %}
                                         </select>
                                         <div class="input-group-append">
-                                            <button class="btn btn-success btn-xs" type="button" style="border-radius: 0px;">Load Data</button>
+                                            <button class="btn btn-success btn-xs" type="button" style="border-radius: 0px;" id="load_data_but">Load Data</button>
                                         </div>
                                     </div>                                    
                                 </div>
@@ -138,6 +145,10 @@
                                         <td></td>
                                         <td>abcd</td>
                                     </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="50">No Records</td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -145,7 +156,13 @@
                 </div>
             </div>
         </div>       
-
+        <div class="row">
+            {% if records.paginator.count > 0 %}
+            <div class="col-md-12 pagination text-center">
+                {% paginate records request.META.QUERY_STRING %}             
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 

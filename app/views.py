@@ -180,15 +180,24 @@ class EditStaff(View):
 class RecordManagement(View):
     template_name = 'app/record_management/index.html'
     msg = ''
+    js_files = ['app_files/records_management.js']
 
     def get(self, request, *args, **kwargs):   
 
-        records = records_helper.RecordsList()
+        page = request.GET.get('page',1)
+        records_per_page = request.GET.get('per_page',None)
+        load_file = request.GET.get('load_file', None) 
+
+        file_ins, records = records_helper.RecordsList(page, records_per_page, load_file)
+        records_file_list = records_helper.RecordsFileList()
 
         return render(request, self.template_name, {
             "file_submission_form" : FileSubmissionForm(),
             "records" : records,
+            "file_ins" : file_ins.id,
+            "records_file_list" : records_file_list
         })     
+
 
     def post(self, request, *args, **kwargs):
 

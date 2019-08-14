@@ -105,17 +105,36 @@ def category_sub_brand_insertion(category, sub_category, brand):
     return cat, sub_cat, brand_ins
 
 
-def RecordsList():
-    file_ins = FileSubmission.objects.exclude(is_active = False).latest('id')
+def RecordsList(page = None, records_per_page = None, file_ins = None):
+
+    if file_ins is None:
+        file_ins = FileSubmission.objects.exclude(is_active = False).latest('id')
+    else:
+        try:
+            file_ins = FileSubmission.objects.get(pk = file_ins)
+        except:
+            return False, False
 
     records = RecordsManagement.objects.filter(record_file = file_ins)
     records = records.select_related('category', 'sub_category','brand', 'record_file')
     records = records.values('category__category_name', 'sub_category__category_name', 'brand__brand_name', 
-                'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on')
+                'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 
+                'record_file__record_file_name')
 
-            
-    print(records)
-    return records
+    per_page = 25
+    if records_per_page is not None:
+        per_page = records_per_page
 
+    if page is None:
+        page = 1
+    
+    paginator = Paginator(records, per_page)
+    records = paginator.get_page(page)
+
+    return file_ins, records
+
+
+def RecordsFileList():
+    return FileSubmission.objects.all().values().order_by('-id')
 
 
