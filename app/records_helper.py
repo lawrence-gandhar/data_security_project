@@ -123,7 +123,7 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
     records = records.select_related('category', 'sub_category','brand', 'record_file')
     records = records.values('category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 
-                'record_file__record_file_name')
+                'record_file__record_file_name').order_by('id')
 
     per_page = 25
     if records_per_page is not None:
