@@ -16,4 +16,23 @@ $(function(){
 		}
 
 	});
+	
+	
+	//
+	// Hide show settings side bar
+	$("button.hide_show_button").click(function(){
+		$("#hide_show_settings").toggle();
+	});
 });
+
+
+function activate_records(){
+	
+	opt = $(".activate_records").val();
+	datalist = $(".case").val();
+	
+	$.post("{% url activate_records %}",{'opt':opt, 'datalist':datalist},function(){
+		
+	});
+	
+}

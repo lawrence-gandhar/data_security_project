@@ -108,7 +108,7 @@ select.form-control{
                                         </select>
                                         <div class="input-group-append">
                                             <button class="btn btn-success btn-xs" type="submit" style="border-radius: 0px;" id="load_data_but">Load Data</button>
-											<button style="font-size:14px" class="btn btn-warning btn-xs" type="button" style="border-radius: 0px;" id="settings_button">
+											<button style="font-size:14px" class="btn btn-warning btn-xs hide_show_button" type="button" style="border-radius: 0px;" id="settings_button">
 												<span class="mdi mdi-settings"></span>
 											</button>
 										</div>
@@ -138,7 +138,7 @@ select.form-control{
                                 {% for rec in records %}
                                     <tr>
                                         <td class="text-center">
-                                            <input type="checkbox" class="case" name="case" value="{{rec.id}}"/>
+                                            <input type="checkbox" class="case" name="case[]" value="{{rec.id}}"/>
                                         </td>
                                         <td class="text-center">{% tick_mark rec.is_active %}</td>
                                         <td>{{ rec.category__category_name|title|safe }}</td>
@@ -218,5 +218,78 @@ select.form-control{
     </div>
 </div>
 
+<div id="hide_show_settings" style="display:block; overflow:hidden; z-index:9; position:fixed; top:70px; right:0; height:100%; width:300px; background:#1e2048 ;">
+	<div class="row" style="margin:0px 0px; background-color:#b66dff; padding:5px 10px; color:#FFFFFF">
+		<span class="mdi mdi-settings" style="line-height:28px;">&nbsp;Settings</span>
+		<button class="btn btn-primary btn-sm hide_show_button" style="right:5px; position:absolute; margin-top: -2px;">Hide</button>
+	</div>
+	<div class="row" style="padding:5px 10px;">
+		<div class="col-12">		
+				<table class="table">
+					<form method="post" action="">
+						{% csrf_token %}
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; border:0px">Activate Selected Records</td>
+							<td style=" border:0px">								
+								<select class="form-control input-xs" name="activate_records" id="activate_records">
+									<option value="0">No</option>
+									<option value="1">Yes</option>
+								</select>
+							</td>
+						</tr>
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+								<button onclick="activate_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+							</td>
+						</tr>
+					</form>
+					<form method="post" action="">
+						{% csrf_token %}
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
+							<td style="color:#FFFFFF; padding-top:15px">								
+								<select class="form-control input-xs">
+									<option value="0">No</option>
+									<option value="1">Yes</option>
+								</select>
+							</td>
+						</tr>
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+								<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+							</td>
+						</tr>
+					</form>
+					<form method="post" action="">
+						{% csrf_token %}
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; padding-top:15px">Assign Selected Records To Staff</td>
+							<td style="padding-top:15px;">
+							<select class="form-control input-xs">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+							</td>
+						</tr>
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; border:0px;">Staff Name</td>
+							<td style=" border:0px">
+							<select class="form-control input-xs">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+							</td>
+						</tr>
+						<tr style="border:0px;">
+							<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+								<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+							</td>
+						</tr>
+					</form>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
 
 {% endblock %}
