@@ -191,12 +191,18 @@ class RecordManagement(View):
         file_ins, records = records_helper.RecordsList(page, records_per_page, load_file)
         records_file_list = records_helper.RecordsFileList()
 
-        return render(request, self.template_name, {
+        context = {
             "file_submission_form" : FileSubmissionForm(),
-            "records" : records,
-            "file_ins" : file_ins.id,
+            "records" : {},
+            "file_ins" : '',
             "records_file_list" : records_file_list
-        })     
+        }
+
+        if file_ins is True and records is not False:
+            context["records"] = records
+            context["file_ins"] = file_ins.id
+
+        return render(request, self.template_name, context)     
 
 
     def post(self, request, *args, **kwargs):

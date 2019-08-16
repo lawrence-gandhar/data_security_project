@@ -91,8 +91,6 @@ def category_sub_brand_insertion(category, sub_category, brand):
     #   Brands Insertion
     #===========================================================================================
 
-    print(category, sub_category, brand)
-
     try:
         brand_insert = Brand(
             brand_name = brand.strip(),
@@ -104,11 +102,17 @@ def category_sub_brand_insertion(category, sub_category, brand):
     
     return cat, sub_cat, brand_ins
 
-
+#===========================================================================================
+# Records List
+# ==========================================================================================
+# 
 def RecordsList(page = None, records_per_page = None, file_ins = None):
 
     if file_ins is None:
-        file_ins = FileSubmission.objects.exclude(is_active = False).latest('id')
+        try:
+            file_ins = FileSubmission.objects.exclude(is_active = False).latest('id')
+        except FileSubmission.DoesNotExist:
+            return False, False
     else:
         try:
             file_ins = FileSubmission.objects.get(pk = file_ins)
