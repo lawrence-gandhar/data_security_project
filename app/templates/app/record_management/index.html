@@ -39,6 +39,8 @@ select.form-control{
     color:#000000;
 }
 
+.btn{border-radius:0px;}
+
 
 </style>
 
@@ -91,14 +93,14 @@ select.form-control{
                 <div class="card">
                     <div class="card-body" style="overflow-x:scroll">
                         <div class="row" style="padding:0px; margin:10px 0px">
-                            <div class="col-6" style="display:block"></div>
-                            <div class="col-6">
+                            <div class="col-4" style="display:block"></div>
+                            <div class="col-8">
                                 <form action="" method="get">
                                 <div class="form-inline">
-                                    <label style="font-size: 80%;" class="col-4">
+                                    <label style="font-size: 80%; text-align:right; padding:0px 0px;" class="col-4">
                                         Select Records File
                                     </label>
-                                    <div class="col-8 input-group">
+                                    <div class="col-8 input-group" style="padding:0px 0px">
                                         <select style="border-radius: 0px;" class="form-control" id="load_data_opt" name="load_file">
                                             {% for records_file in records_file_list %}
                                                 <option {% if file_ins == records_file.id %} selected {% endif %} value="{{ records_file.id }}">{{ records_file.record_file_name }}</option>
@@ -106,7 +108,10 @@ select.form-control{
                                         </select>
                                         <div class="input-group-append">
                                             <button class="btn btn-success btn-xs" type="submit" style="border-radius: 0px;" id="load_data_but">Load Data</button>
-                                        </div>
+											<button style="font-size:14px" class="btn btn-warning btn-xs" type="button" style="border-radius: 0px;" id="settings_button">
+												<span class="mdi mdi-settings"></span>
+											</button>
+										</div>
                                     </div>                                    
                                 </div>
                                 </form>
