@@ -196,7 +196,8 @@ class RecordManagement(View):
             "file_submission_form" : FileSubmissionForm(),
             "records" : {},
             "file_ins" : '',
-            "records_file_list" : records_file_list
+            "records_file_list" : records_file_list,
+            "js_files" : self.js_files,
         }
 
         if load_file is not None:

@@ -121,7 +121,7 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
 
     records = RecordsManagement.objects.filter(record_file = file_ins)
     records = records.select_related('category', 'sub_category','brand', 'record_file')
-    records = records.values('category__category_name', 'sub_category__category_name', 'brand__brand_name', 
+    records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 
                 'record_file__record_file_name').order_by('id')
 
