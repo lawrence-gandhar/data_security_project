@@ -238,3 +238,10 @@ class RecordManagement(View):
             "file_submission_form" : FileSubmissionForm(),
             "error_msg" : self.msg,
         })
+    
+    
+#=========================================================================================
+# ACTIVATE RECORDS
+#=========================================================================================    
+def activate_records(request):
+    return HttpResponse('')

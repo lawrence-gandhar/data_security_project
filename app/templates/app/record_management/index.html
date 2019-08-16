@@ -117,6 +117,7 @@ select.form-control{
                                 </form>
                             </div>
                         </div>
+						<form id="my_form" method="post">
                         <table class="table table-bordered table-stripped" style="margin-bottom:0px;font-size:85%">
                             <thead class="text-center">
                                 <td style="padding:10px;"><input type="checkbox" id="selectall"/></td>
@@ -135,32 +136,35 @@ select.form-control{
                                 <td style="padding:10px;">Action</td>
                             </thead>
                             <tbody>
-                                {% for rec in records %}
-                                    <tr>
-                                        <td class="text-center">
-                                            <input type="checkbox" class="case" name="case[]" value="{{rec.id}}"/>
-                                        </td>
-                                        <td class="text-center">{% tick_mark rec.is_active %}</td>
-                                        <td>{{ rec.category__category_name|title|safe }}</td>
-                                        <td>{{ rec.sub_category__category_name|title|safe }}</td>
-                                        <td>{{ rec.brand__brand_name|title|safe }}</td>
-                                        <td>{{ rec.contact_person|title|safe }}</td>
-                                        <td>{{ rec.contact_number|safe }}</td>
-                                        <td>{{ rec.email|safe }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
-                                        <td></td>
-                                        <td>abcd</td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="50">No Records</td>
-                                    </tr>
-                                {% endfor %}
+								
+									{% csrf_token %}
+									{% for rec in records %}
+										<tr>
+											<td class="text-center">
+												<input type="checkbox" class="case" name="case[]" value="{{rec.id}}"/>
+											</td>
+											<td class="text-center">{% tick_mark rec.is_active %}</td>
+											<td>{{ rec.category__category_name|title|safe }}</td>
+											<td>{{ rec.sub_category__category_name|title|safe }}</td>
+											<td>{{ rec.brand__brand_name|title|safe }}</td>
+											<td>{{ rec.contact_person|title|safe }}</td>
+											<td>{{ rec.contact_number|safe }}</td>
+											<td>{{ rec.email|safe }}</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
+											<td></td>
+											<td>abcd</td>
+										</tr>
+									{% empty %}
+										<tr>
+											<td colspan="50">No Records</td>
+										</tr>
+									{% endfor %}
                             </tbody>
                         </table>
+						</form>
                     </div>
                 </div>
             </div>
@@ -225,71 +229,66 @@ select.form-control{
 	</div>
 	<div class="row" style="padding:5px 10px;">
 		<div class="col-12">		
-				<table class="table">
-					<form method="post" action="">
-						{% csrf_token %}
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; border:0px">Activate Selected Records</td>
-							<td style=" border:0px">								
-								<select class="form-control input-xs" name="activate_records" id="activate_records">
-									<option value="0">No</option>
-									<option value="1">Yes</option>
-								</select>
-							</td>
-						</tr>
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-								<button onclick="activate_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
-							</td>
-						</tr>
-					</form>
-					<form method="post" action="">
-						{% csrf_token %}
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
-							<td style="color:#FFFFFF; padding-top:15px">								
-								<select class="form-control input-xs">
-									<option value="0">No</option>
-									<option value="1">Yes</option>
-								</select>
-							</td>
-						</tr>
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-								<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
-							</td>
-						</tr>
-					</form>
-					<form method="post" action="">
-						{% csrf_token %}
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; padding-top:15px">Assign Selected Records To Staff</td>
-							<td style="padding-top:15px;">
+			<table class="table">
+				<tr style="border:0px;">
+					<td style="color:#FFFFFF; border:0px">Activate Selected Records</td>
+					<td style=" border:0px">								
+						<select class="form-control input-xs" name="activate_records" id="activate_records">
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+					</td>
+				</tr>
+				<tr style="border:0px;">
+					<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+						<button onclick="act_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+					</td>
+				</tr>
+				<form method="post" action="">
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
+						<td style="color:#FFFFFF; padding-top:15px">								
 							<select class="form-control input-xs">
 								<option value="0">No</option>
 								<option value="1">Yes</option>
 							</select>
-							</td>
-						</tr>
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; border:0px;">Staff Name</td>
-							<td style=" border:0px">
-							<select class="form-control input-xs">
-								<option value="0">No</option>
-								<option value="1">Yes</option>
-							</select>
-							</td>
-						</tr>
-						<tr style="border:0px;">
-							<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-								<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
-							</td>
-						</tr>
-					</form>
-				</table>
-			</form>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+							<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+						</td>
+					</tr>
+				</form>
+				<form method="post" action="">
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; padding-top:15px">Assign Selected Records To Staff</td>
+						<td style="padding-top:15px;">
+						<select class="form-control input-xs">
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px;">Staff Name</td>
+						<td style=" border:0px">
+						<select class="form-control input-xs">
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+							<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+						</td>
+					</tr>
+				</form>
+			</table>
 		</div>
 	</div>
 </div>
+
 
 {% endblock %}

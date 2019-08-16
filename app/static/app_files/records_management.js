@@ -1,3 +1,4 @@
+
 $(function(){
 
 	// add multiple select / deselect functionality
@@ -23,16 +24,19 @@ $(function(){
 	$("button.hide_show_button").click(function(){
 		$("#hide_show_settings").toggle();
 	});
+	
+		
 });
 
-
-function activate_records(){
+function act_records(){
+	opt = $("#activate_records").val();
 	
-	opt = $(".activate_records").val();
-	datalist = $(".case").val();
+	form_elem = $("form#my_form").serialize();
+	//form_elem.push({"opt":opt});
 	
-	$.post("{% url activate_records %}",{'opt':opt, 'datalist':datalist},function(){
+	
+	$.post("/activate_records/",form_elem,function(){
 		
 	});
-	
 }
+
