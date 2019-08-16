@@ -189,6 +189,7 @@ class RecordManagement(View):
         load_file = request.GET.get('load_file', None) 
 
         file_ins, records = records_helper.RecordsList(page, records_per_page, load_file)
+
         records_file_list = records_helper.RecordsFileList()
 
         context = {
@@ -198,7 +199,12 @@ class RecordManagement(View):
             "records_file_list" : records_file_list
         }
 
-        if file_ins is True and records is not False:
+        if load_file is not None:
+            context["url_ext"] = "&load_file="+load_file
+        else:
+            context["load_file"] = ""
+
+        if file_ins is not False:
             context["records"] = records
             context["file_ins"] = file_ins.id
 

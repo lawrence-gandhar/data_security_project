@@ -76,10 +76,10 @@ select.form-control{
                             Show <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=25">25</a></li>
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=50">50</a></li>
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=100">100</a></li>
-                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=200">200</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=25{{url_ext|safe}}">25</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=50{{url_ext|safe}}">50</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=100{{url_ext|safe}}">100</a></li>
+                            <li class="text-center"><a style="display: block; color: #000000;" href="?per_page=200{{url_ext|safe}}">200</a></li>
                         </ul>
                     </div>
                 </div>
@@ -93,21 +93,23 @@ select.form-control{
                         <div class="row" style="padding:0px; margin:10px 0px">
                             <div class="col-6" style="display:block"></div>
                             <div class="col-6">
+                                <form action="" method="get">
                                 <div class="form-inline">
                                     <label style="font-size: 80%;" class="col-4">
                                         Select Records File
                                     </label>
                                     <div class="col-8 input-group">
-                                        <select style="border-radius: 0px;" class="form-control" id="load_data_opt">
+                                        <select style="border-radius: 0px;" class="form-control" id="load_data_opt" name="load_file">
                                             {% for records_file in records_file_list %}
                                                 <option {% if file_ins == records_file.id %} selected {% endif %} value="{{ records_file.id }}">{{ records_file.record_file_name }}</option>
                                             {% endfor %}
                                         </select>
                                         <div class="input-group-append">
-                                            <button class="btn btn-success btn-xs" type="button" style="border-radius: 0px;" id="load_data_but">Load Data</button>
+                                            <button class="btn btn-success btn-xs" type="submit" style="border-radius: 0px;" id="load_data_but">Load Data</button>
                                         </div>
                                     </div>                                    
                                 </div>
+                                </form>
                             </div>
                         </div>
                         <table class="table table-bordered table-stripped" style="margin-bottom:0px;font-size:85%">
