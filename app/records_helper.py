@@ -123,10 +123,10 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
     records = RecordsManagement.objects.filter(record_file = file_ins)
     records = records.select_related('category', 'sub_category','brand', 'record_file',)
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
-                'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 
+                'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
                 'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 'assigned_on').order_by('id')
 
-    per_page = 25
+    per_page = 10
     if records_per_page is not None:
         per_page = records_per_page
 
@@ -209,6 +209,38 @@ def PreviousAssignmentsExists(user_id, file_ins):
         
     return False, app_perm.app_permissions.record_access_size - all_records
         
+
+#===========================================================================================
+# CHECK PREVIOUS ASSIGNMENTS OF RECORDS TO USER IN THE SAME FILE/SLOT 
+# ==========================================================================================
+#
+def GetRecord(user_id):
+    records = RecordsManagement.objects.filter(assigned_to = user_id, is_completed = False)
+    
+    record_fetch = records.filter(disposition = 0)
+    record_fetch = record_fetch.select_related('category', 'sub_category','brand', 'record_file',)
+    record_fetch = record_fetch.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
+                'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on').order_by('id')[:1]   
+
+
+    record_remarked_count = records.exclude(disposition = 0).count()
+    pending_records = records.count()
+    
+    
+    return record_fetch, record_remarked_count, pending_records
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
         

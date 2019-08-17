@@ -1,0 +1,103 @@
+{% extends 'app/base/base.html' %}
+{% load static %}
+
+{% load common_filters %}
+{% load pagination %}
+
+{% block content %}
+
+<style>
+p{padding: 5px 0px; margin-bottom:0px;}
+</style>
+
+<div class="main-panel">          
+    <div class="content-wrapper">
+        {% if messages %}
+            <div class="row alert alert-danger alert-dismissible" role="alert">
+                {% for message in messages %}
+                    <p>{{ message|safe }}</p>
+                {% endfor %}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        {% if error_msg is not None %}
+            <div class="row alert alert-danger alert-dismissible" role="alert">
+                {{error_msg|safe}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>			
+        {% endif %}
+
+        <div class="page-header" style="margin: 0px -21px; margin-bottom:10px; ">
+            <h3 class="page-title">Records Board</h3>
+		</div>
+		
+		<div class="row">
+            <div class="col-12 grid-margin stretch-card" style="padding:0px 0px; margin-bottom:10px">
+                <div class="card">
+                    <div class="card-body" style="overflow:auto">
+						{% for rec in records %}
+						<form action="" method="post">
+							{% csrf_token %}
+							<input type="hidden" value="{{ rec.id }}" name="record_id">
+						
+							<div class="col-12">
+								<p><strong>Record ID :</strong> {{rec.id}}</p> 
+								<p><strong>Loaded From :</strong> {{rec.record_file__record_file_name}}</p>
+								<p><strong>Assigned On. :</strong> {{rec.assigned_on|date:'D, d M Y'}}</p>
+							</div>
+							<div class="col-12">
+							
+								<table class="table" style="margin-top:10px">
+									<tr>
+										<td style="font-size:1rem; padding:10px 0px">
+											<strong>Industry</strong>: {{rec.category__category_name}}
+										</td>
+										<td style="font-size:1rem; padding:10px 0px">
+											<strong>Sub Industry</strong>: {{rec.sub_category__category_name}}
+										</td>
+										<td style="font-size:1rem; padding:10px 0px">
+											<strong>Brand</strong>: {{rec.brand__brand_name}}
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:1rem; padding:10px 0px">
+											<strong>Contact Person</strong>: {{rec.contact_person}}
+										</td>
+										<td style="font-size:1rem; padding:10px 0px">
+											<strong>Phone</strong>: {{rec.phone}}
+										</td>
+										<td style="font-size:1rem; padding:10px 0px">
+											<strong>Email</strong>: {{rec.email}}
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:1rem; padding:5px 0px" colspan="3"><strong>Remarks</strong>:
+											<textarea required style="margin-top:10px;" name="remarks" class="form-control" rows="10"></textarea>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="3" class="text-right" style="border-top:0px; padding-top:10px">
+											<button class="btn btn-xs btn-success">Save</button>
+										</td>
+									</tr>
+								</table>
+							</div>
+							
+							
+						</form>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+</div>
+
+
+{% endblock %}

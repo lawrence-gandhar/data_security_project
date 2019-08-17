@@ -160,10 +160,14 @@ select.form-control{
 												{{ rec.assigned_to__first_name|upper|safe }} {{ rec.assigned_to__last_name|upper|safe }}
 											{% endif %}
 											</td>
-											<td></td>
+											<td>
+											{% if  rec.remarks is not None %}
+											{{rec.remarks|safe}}
+											{% endif %}
+											</td>
 											<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
 											<td>{{rec.assigned_on|date:'D, d M Y'}}</td>
-											<td></td>
+											<td>{{rec.remark_added_on|date:'D, d M Y'}}</td>
 											<td>abcd</td>
 										</tr>
 									{% empty %}
@@ -252,33 +256,29 @@ select.form-control{
 					<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
 						<button onclick="act_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
 					</td>
+				</tr>					
+				<tr style="border:0px;">
+					<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
+					<td style="color:#FFFFFF; padding-top:15px">								
+						<select class="form-control input-xs" id="auto_assign">
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+					</td>
 				</tr>
-				<form method="post" action="{% url 'auto_assign' %}">
-					{% csrf_token %}
-					<input type="hidden" name="file_ins" value="{{file_ins}}">
-					<tr style="border:0px;">
-						<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
-						<td style="color:#FFFFFF; padding-top:15px">								
-							<select class="form-control input-xs" id="auto_assign">
-								<option value="0">No</option>
-								<option value="1">Yes</option>
-							</select>
-						</td>
-					</tr>
-					<tr style="border:0px;">
-						<td style="color:#FFFFFF; border:0px;">Select Staff</td>
-						<td>
-							<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple required>
-								<option val="0" selected>ALL STAFF</option>
-							</select>
-						</td>
-					</tr>
-					<tr style="border:0px;">
-						<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-							<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
-						</td>
-					</tr>
-				</form>
+				<tr style="border:0px;">
+					<td style="color:#FFFFFF; border:0px;">Select Staff</td>
+					<td>
+						<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple required>
+							<option val="0" selected>ALL STAFF</option>
+						</select>
+					</td>
+				</tr>
+				<tr style="border:0px;">
+					<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
+						<button type="button" onclick="auto_assign_rec()" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+					</td>
+				</tr>
 				<form method="post" action="">
 					<tr style="border:0px;">
 						<td style="color:#FFFFFF; padding-top:15px">Assign Selected Records To Staff</td>

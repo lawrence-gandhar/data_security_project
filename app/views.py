@@ -276,16 +276,32 @@ def auto_assign(request):
 #=========================================================================================  
 class StaffRecord(View):
 
-    template_name = 'app/staff/staff_record.html'
+    template_name = 'app/staff_section/index.html'
     context = {}
     
     def get(self, request, *args, **kwargs):
         
-        if not kwargs["record_id"]:
-            self.context["error_msg"] = "No Records are assigned to you."
+        if not kwargs:
+            
+            record_fetch, record_remarked_count, pending_records = records_helper.GetRecord(request.user)
+        
+            if pending_records == 0:
+                self.context["error_msg"] = "No Records are assigned to you."
+            else:
+                self.context["records"] = record_fetch
             
         return render(request, self.template_name, self.context)      
         
+        
+    def post(self, request, *args, **kwargs):
+        record = RecordsManagement.objects.get(pk = request.POST["record_id"])
+        
+        record.remarks = request.POST["remarks"]
+        record.remarked_on = timezone.now()
+        record.disposition = 1
+        
+        record.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
     
     
     

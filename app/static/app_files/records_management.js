@@ -25,7 +25,7 @@ $(function(){
 	// Hide show settings side bar
 	$(".hide_show_button").click(function(){
 		$("#hide_show_settings").toggle();
-		$("."+$(this).attr("params")).show();
+		//$("."+$(this).attr("params")).show();
 	});
 	
 		
@@ -47,7 +47,7 @@ function auto_assign_rec(){
 	opt = $("#auto_assign").val();
 	
 	$.get('/auto_assign/',{'file_ins':file_ins, 'opt':opt,}, function(){
-		
+		location.reload()
 	});
 }
 	
