@@ -108,9 +108,12 @@ select.form-control{
                                         </select>
                                         <div class="input-group-append">
                                             <button class="btn btn-success btn-xs" type="submit" style="border-radius: 0px;" id="load_data_but">Load Data</button>
-											<button style="font-size:14px" class="btn btn-warning btn-xs hide_show_button" type="button" style="border-radius: 0px;" id="settings_button">
+											<button style="font-size:14px" class="btn btn-warning btn-xs  dropdown-toggle" data-toggle="dropdown" type="button" style="border-radius: 0px;">
 												<span class="mdi mdi-settings"></span>
 											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li class="text-center"><span class="hide_show_button" params="activate_section">Activate/Deactivate Records</span></li>
+											</ul>
 										</div>
                                     </div>                                    
                                 </div>
@@ -236,7 +239,7 @@ select.form-control{
 	<div class="row" style="padding:5px 10px;">
 		<div class="col-12">		
 			<table class="table">
-				<tr style="border:0px;">
+				<tr style="border:0px;display:none" class="activate_section">
 					<td style="color:#FFFFFF; border:0px">Activate Selected Records</td>
 					<td style=" border:0px">								
 						<select class="form-control input-xs" name="activate_records" id="activate_records">
@@ -245,12 +248,14 @@ select.form-control{
 						</select>
 					</td>
 				</tr>
-				<tr style="border:0px;">
+				<tr style="border:0px;display:none" class="activate_section">
 					<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
 						<button onclick="act_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
 					</td>
 				</tr>
-				<form method="post" action="">
+				<form method="post" action="{% url 'auto_assign' %}">
+					{% csrf_token %}
+					<input type="hidden" name="file_ins" value="{{file_ins}}">
 					<tr style="border:0px;">
 						<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
 						<td style="color:#FFFFFF; padding-top:15px">								
@@ -261,8 +266,16 @@ select.form-control{
 						</td>
 					</tr>
 					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px;">Select Staff</td>
+						<td>
+							<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple required>
+								<option val="0" selected>ALL STAFF</option>
+							</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
 						<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-							<button onclick="auto_assign_rec()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+							<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
 						</td>
 					</tr>
 				</form>

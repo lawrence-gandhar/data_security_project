@@ -268,8 +268,24 @@ def auto_assign(request):
     if file_ins is not None and opt:
         records_helper.AutoAssignRecords(file_ins, opt)
 
-    return HttpResponse('')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
 
 
+#=========================================================================================
+# AUTO ASSIGN RECORDS
+#=========================================================================================  
+class StaffRecord(View):
 
+    template_name = 'app/staff/staff_record.html'
+    context = {}
+    
+    def get(self, request, *args, **kwargs):
+        
+        if not kwargs["record_id"]:
+            self.context["error_msg"] = "No Records are assigned to you."
+            
+        return render(request, self.template_name, self.context)      
+        
+    
+    
     

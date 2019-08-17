@@ -23,8 +23,9 @@ $(function(){
 	
 	//
 	// Hide show settings side bar
-	$("button.hide_show_button").click(function(){
+	$(".hide_show_button").click(function(){
 		$("#hide_show_settings").toggle();
+		$("."+$(this).attr("params")).show();
 	});
 	
 		

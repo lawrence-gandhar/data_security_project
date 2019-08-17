@@ -19,4 +19,5 @@ urlpatterns = [
     path('record-management/', never_cache(login_required(RecordManagement.as_view())), name = "record_management"),
     path('activate_records/', login_required(activate_records), name='activate_records'),
     path('auto_assign/', login_required(auto_assign), name='auto_assign'),
+    path('staff-record/<int:record_id>/', never_cache(login_required(StaffRecord.as_view())), name='staff_record'),
 ]

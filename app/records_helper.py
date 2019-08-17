@@ -139,6 +139,10 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
     return file_ins, records
 
 
+#===========================================================================================
+# Records FILES List
+# ==========================================================================================
+#
 def RecordsFileList():
     return FileSubmission.objects.all().values().order_by('-id')
 
@@ -152,16 +156,17 @@ def RecordsStatus(records = list(), opt = '0'):
             pass
 
 
+#===========================================================================================
+# AUTO ASSIGNMENT Records  - All Staff
+# ==========================================================================================
+#
 def AutoAssignRecords(file_ins = 0, opt = False):
     if opt:
+        
         app_perm = User.objects.filter(is_staff = True, is_superuser = False, is_active = True,)
         app_perm = app_perm.select_related('app_permissions')
-        app_perm = app_perm.values(
-                        'id', 'app_permissions__record_access_size', 
-                        'app_permissions__full_access', 'app_permissions__read_only_mode',
-                    )
+        app_perm = app_perm.values('id', 'app_permissions__record_access_size',)
 
-        
         try:
             file_ins = FileSubmission.objects.get(pk = int(file_ins))        
         except:
@@ -169,25 +174,41 @@ def AutoAssignRecords(file_ins = 0, opt = False):
             return False
         
         for user in app_perm:
-            print(user["app_permissions__record_access_size"])
+            ret, buff_size = PreviousAssignmentsExists(user["id"], file_ins)
             
-            records = RecordsManagement.objects.filter(is_active = True, record_file = file_ins, is_assigned = False)
-            records = records.values()[:user["app_permissions__record_access_size"]]
-            
-            for record in records:
+            if not ret:
                 
-                rec = RecordsManagement.objects.get(pk = record["id"])
-                rec.assigned_to_id = user["id"]
-                rec.assigned_on = timezone.now()
-                rec.is_assigned = opt
-                rec.save()
-                print(rec)
+                records = RecordsManagement.objects.filter(is_active = True, record_file = file_ins, is_assigned = False,)
+                records = records.values()[:buff_size]
+                
+                for record in records:
+                    
+                    rec = RecordsManagement.objects.get(pk = record["id"])
+                    rec.assigned_to_id = user["id"]
+                    rec.assigned_on = timezone.now()
+                    rec.is_assigned = opt
+                    rec.save()         
+        
 
-            print(records.count())
+#===========================================================================================
+# CHECK PREVIOUS ASSIGNMENTS OF RECORDS TO USER IN THE SAME FILE/SLOT 
+# ==========================================================================================
+#
+def PreviousAssignmentsExists(user_id, file_ins):
 
+    app_perm = User.objects.get(pk = user_id)
 
-
-
-
+    records = RecordsManagement.objects.filter(is_active = True, record_file = file_ins, is_assigned = True, 
+                assigned_to = user_id) 
+    
+    completed_records = records.filter(is_completed = True).count()
+    all_records = records.count()
+    
+    if all_records == app_perm.app_permissions.record_access_size and completed_records < app_perm.app_permissions.record_access_size:
+        return True, 0
+        
+    return False, app_perm.app_permissions.record_access_size - all_records
+        
+    
     
         

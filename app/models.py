@@ -122,6 +122,7 @@ class RecordsManagement(models.Model):
     assigned_on = models.DateTimeField(null = True, db_index = True,)
     remarks = models.TextField(null = True, blank = True, )
     remark_added_on = models.DateTimeField(null = True, db_index = True,)
+    is_completed = models.BooleanField(default = False, db_index = True,)
     disposition = models.IntegerField(default = 0, db_index = True,)
 
     class Meta:
