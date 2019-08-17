@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 import openpyxl, os, sys, re
 from django.conf import settings
 from django.db import IntegrityError
+from django.utils import timezone
 
 #===========================================================================================
 # Excel to DB insertion 
@@ -120,10 +121,10 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
             return False, False
 
     records = RecordsManagement.objects.filter(record_file = file_ins)
-    records = records.select_related('category', 'sub_category','brand', 'record_file')
+    records = records.select_related('category', 'sub_category','brand', 'record_file',)
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 
-                'record_file__record_file_name').order_by('id')
+                'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 'assigned_on').order_by('id')
 
     per_page = 25
     if records_per_page is not None:
@@ -141,4 +142,52 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
 def RecordsFileList():
     return FileSubmission.objects.all().values().order_by('-id')
 
+def RecordsStatus(records = list(), opt = '0'):
+    for rec in records:
+        try:
+            record = RecordsManagement.objects.get(pk = int(rec))
+            record.is_active = int(opt)
+            record.save()
+        except:
+            pass
 
+
+def AutoAssignRecords(file_ins = 0, opt = False):
+    if opt:
+        app_perm = User.objects.filter(is_staff = True, is_superuser = False, is_active = True,)
+        app_perm = app_perm.select_related('app_permissions')
+        app_perm = app_perm.values(
+                        'id', 'app_permissions__record_access_size', 
+                        'app_permissions__full_access', 'app_permissions__read_only_mode',
+                    )
+
+        
+        try:
+            file_ins = FileSubmission.objects.get(pk = int(file_ins))        
+        except:
+            file_ins = None
+            return False
+        
+        for user in app_perm:
+            print(user["app_permissions__record_access_size"])
+            
+            records = RecordsManagement.objects.filter(is_active = True, record_file = file_ins, is_assigned = False)
+            records = records.values()[:user["app_permissions__record_access_size"]]
+            
+            for record in records:
+                
+                rec = RecordsManagement.objects.get(pk = record["id"])
+                rec.assigned_to_id = user["id"]
+                rec.assigned_on = timezone.now()
+                rec.is_assigned = opt
+                rec.save()
+                print(rec)
+
+            print(records.count())
+
+
+
+
+
+    
+        

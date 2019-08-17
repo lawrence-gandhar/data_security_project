@@ -131,7 +131,8 @@ select.form-control{
                                 <td style="padding:10px;">Is Assigned</td>
                                 <td style="padding:10px;">Assigned To</td>
                                 <td style="padding:10px;">Remarks</td>
-                                <td style="padding:10px;">Added On</td>                                
+                                <td style="padding:10px;">Added On</td>  
+								<td style="padding:10px;">Assigned On</td> 								
                                 <td style="padding:10px;">Remarked On</td>
                                 <td style="padding:10px;">Action</td>
                             </thead>
@@ -150,10 +151,15 @@ select.form-control{
 											<td>{{ rec.contact_person|title|safe }}</td>
 											<td>{{ rec.contact_number|safe }}</td>
 											<td>{{ rec.email|safe }}</td>
-											<td></td>
-											<td></td>
+											<td>{{ rec.is_assigned }}</td>
+											<td>
+											{% if  rec.assigned_to is not None %}
+												{{ rec.assigned_to__first_name|upper|safe }} {{ rec.assigned_to__last_name|upper|safe }}
+											{% endif %}
+											</td>
 											<td></td>
 											<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
+											<td>{{rec.assigned_on|date:'D, d M Y'}}</td>
 											<td></td>
 											<td>abcd</td>
 										</tr>
@@ -248,7 +254,7 @@ select.form-control{
 					<tr style="border:0px;">
 						<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
 						<td style="color:#FFFFFF; padding-top:15px">								
-							<select class="form-control input-xs">
+							<select class="form-control input-xs" id="auto_assign">
 								<option value="0">No</option>
 								<option value="1">Yes</option>
 							</select>
@@ -256,7 +262,7 @@ select.form-control{
 					</tr>
 					<tr style="border:0px;">
 						<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-							<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+							<button onclick="auto_assign_rec()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
 						</td>
 					</tr>
 				</form>
@@ -290,5 +296,10 @@ select.form-control{
 	</div>
 </div>
 
+<script>
+	
+	var csrf_token = '{{csrf_token}}';
+	
+</script>
 
 {% endblock %}

@@ -244,4 +244,32 @@ class RecordManagement(View):
 # ACTIVATE RECORDS
 #=========================================================================================    
 def activate_records(request):
+    records = request.POST.getlist('case[]')  
+    opt = request.POST['opt']
+    
+    if len(records) > 0:
+        records_helper.RecordsStatus(records, opt)
+        
+    return HttpResponse('1')
+    
+
+#=========================================================================================
+# AUTO ASSIGN RECORDS
+#=========================================================================================    
+def auto_assign(request):
+    opt = request.GET.get('opt',False)
+    file_ins = request.GET.get('file_ins',None)
+    
+    if opt == '0':
+        opt = False
+    else:
+        opt = True
+
+    if file_ins is not None and opt:
+        records_helper.AutoAssignRecords(file_ins, opt)
+
     return HttpResponse('')
+
+
+
+    

@@ -1,5 +1,7 @@
 
 $(function(){
+	
+	$("#hide_show_settings").hide();
 
 	// add multiple select / deselect functionality
 	$("#selectall").click(function () {
@@ -32,11 +34,20 @@ function act_records(){
 	opt = $("#activate_records").val();
 	
 	form_elem = $("form#my_form").serialize();
-	//form_elem.push({"opt":opt});
+	form_elem += "&opt="+opt;
 	
+	$.post("/activate_records/",form_elem,function(data){
+		location.reload();
+	});
+}
+
+function auto_assign_rec(){
+	file_ins = $("#load_data_opt").val();
+	opt = $("#auto_assign").val();
 	
-	$.post("/activate_records/",form_elem,function(){
+	$.get('/auto_assign/',{'file_ins':file_ins, 'opt':opt,}, function(){
 		
 	});
 }
+	
 

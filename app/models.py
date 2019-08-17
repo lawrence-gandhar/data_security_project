@@ -117,6 +117,14 @@ class RecordsManagement(models.Model):
     contact_person = models.CharField(max_length = 250, blank = True, null = True, )
     contact_number = models.CharField(max_length = 250, blank = True, null = True, )
     email = models.CharField(max_length = 250, blank = True, null = True, )
+    is_assigned = models.BooleanField(default = False, db_index = True,)
+    assigned_to = models.ForeignKey(User, db_index = True, null = True, on_delete = models.SET_NULL,)
+    assigned_on = models.DateTimeField(null = True, db_index = True,)
+    remarks = models.TextField(null = True, blank = True, )
+    remark_added_on = models.DateTimeField(null = True, db_index = True,)
+    disposition = models.IntegerField(default = 0, db_index = True,)
 
     class Meta:
         db_table = 'records_tbl'
+        
+        
