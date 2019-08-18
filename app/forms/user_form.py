@@ -52,6 +52,11 @@ class AppPermissionForm(ModelForm):
         widgets = {
             'read_only_mode': CheckboxInput(attrs={'value':'1',}),
             'record_access_size': TextInput(attrs={'class':'form-control input-sm'}),
-            'full_access': CheckboxInput(attrs={'value':'1',}),
+            'full_access': CheckboxInput(attrs={'value':'1',}),            
         }
-
+        
+        
+        
+        
+        
+        

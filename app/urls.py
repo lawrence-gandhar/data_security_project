@@ -21,4 +21,5 @@ urlpatterns = [
     path('auto_assign/', login_required(auto_assign), name='auto_assign'),
     path('staff-record/', never_cache(login_required(StaffRecord.as_view())), name='staff_record'),
     path('staff-record/<int:record_id>/', never_cache(login_required(StaffRecord.as_view())), name='staff_record'),
+    path('get_sub_category/', login_required(get_sub_category), name='get_sub_category'),
 ]

@@ -32,7 +32,6 @@ def insert_into_db(file_ins, file_path):
 
         cat, sub_cat, brand_ins = category_sub_brand_insertion(category, sub_category, brand)
        
-        
         record = RecordsManagement(
             record_file = file_ins,
             is_active = file_ins.is_active,
@@ -103,11 +102,32 @@ def category_sub_brand_insertion(category, sub_category, brand):
     
     return cat, sub_cat, brand_ins
 
+
+#==========================================================================================
+#   Category, Sub Category & Brand Lists
+#==========================================================================================
+#
+
+def CategoryList():
+    return Category.objects.filter(is_active = True, category_is_parent = True,)
+    
+    
+def SubCategoryList(cate = None):
+    sub_cat = Category.objects.filter(is_active = True, category_is_parent = False,)
+    if cate is not None:
+        sub_cat = sub_cat.filter(category_parent_id = cate)
+    return sub_cat    
+    
+    
+def BrandList(cat = None, sub_cat = None):    
+    return Brand.objects.filter(is_active = True,)
+    
+
 #===========================================================================================
 # Records List
 # ==========================================================================================
 # 
-def RecordsList(page = None, records_per_page = None, file_ins = None):
+def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = {}):
 
     if file_ins is None:
         try:
@@ -121,6 +141,24 @@ def RecordsList(page = None, records_per_page = None, file_ins = None):
             return False, False
 
     records = RecordsManagement.objects.filter(record_file = file_ins)
+    
+    if len(kwargs) > 0:
+        
+        if kwargs["active"]!='':
+            records = records.filter(is_active = kwargs["active"])
+                
+        if kwargs["assigned"]!='':
+            records = records.filter(is_assigned = kwargs["assigned"])
+            
+        if kwargs["cate"]!='':
+            records = records.filter(category_id = kwargs["cate"])
+            
+        if kwargs["sub_cat"]!='':
+            records = records.filter(sub_category_id = kwargs["sub_cat"])
+            
+        if kwargs["brand"]!='':
+            records = records.filter(brand_id = int(kwargs["brand"]))
+    
     records = records.select_related('category', 'sub_category','brand', 'record_file',)
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
@@ -160,12 +198,17 @@ def RecordsStatus(records = list(), opt = '0'):
 # AUTO ASSIGNMENT Records  - All Staff
 # ==========================================================================================
 #
-def AutoAssignRecords(file_ins = 0, opt = False):
+def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
     if opt:
-        
-        app_perm = User.objects.filter(is_staff = True, is_superuser = False, is_active = True,)
-        app_perm = app_perm.select_related('app_permissions')
-        app_perm = app_perm.values('id', 'app_permissions__record_access_size',)
+    
+        if staff_list[0] == 0:
+            app_perm = User.objects.filter(is_staff = True, is_superuser = False, is_active = True,)
+        else:
+            app_perm = User.objects.filter(pk__in = staff_list)
+            
+        app_perm = app_perm.select_related('app_permissions')        
+        app_perm = app_perm.values('id', 'app_permissions__record_access_size', 'app_permissions__dedicated_to_category',
+                        'app_permissions__dedicated_to_sub_category', 'app_permissions__dedicated_to_brand')
 
         try:
             file_ins = FileSubmission.objects.get(pk = int(file_ins))        
@@ -179,6 +222,16 @@ def AutoAssignRecords(file_ins = 0, opt = False):
             if not ret:
                 
                 records = RecordsManagement.objects.filter(is_active = True, record_file = file_ins, is_assigned = False,)
+                
+                if user["app_permissions__dedicated_to_category"] is not None:
+                    records = records.filter(category = user["app_permissions__dedicated_to_category"])
+                
+                if user["app_permissions__dedicated_to_sub_category"] is not None:
+                    records = records.filter(sub_category = user["app_permissions__dedicated_to_sub_category"])
+                    
+                if user["app_permissions__dedicated_to_brand"] is not None:
+                    records = records.filter(brand = user["app_permissions__dedicated_to_brand"])
+                
                 records = records.values()[:buff_size]
                 
                 for record in records:

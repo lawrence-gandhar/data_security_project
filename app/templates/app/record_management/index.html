@@ -41,6 +41,14 @@ select.form-control{
 
 .btn{border-radius:0px;}
 
+#hide_show_settings{display:none;}
+
+.form-inline label {
+    display: flex;
+    align-items: right;
+    justify-content: right;
+    margin-bottom: 0;
+}
 
 </style>
 
@@ -108,11 +116,31 @@ select.form-control{
                                         </select>
                                         <div class="input-group-append">
                                             <button class="btn btn-success btn-xs" type="submit" style="border-radius: 0px;" id="load_data_but">Load Data</button>
+											<button style="font-size:14px" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#filters_modal" type="button" style="border-radius: 0px;">
+												<span class="mdi mdi-filter-outline"></span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li style="padding:5px 10px; cursor:pointer;">
+													
+												</li>
+											</ul>
+										</div>	
+										<div class="input-group-append">	
 											<button style="font-size:14px" class="btn btn-warning btn-xs  dropdown-toggle" data-toggle="dropdown" type="button" style="border-radius: 0px;">
 												<span class="mdi mdi-settings"></span>
 											</button>
 											<ul class="dropdown-menu" role="menu">
-												<li class="text-center"><span class="hide_show_button" params="activate_section">Activate/Deactivate Records</span></li>
+												<li style="padding:5px 10px; cursor:pointer;">
+													<span class="hide_show_button" params="activate_section">Activate/Deactivate Records</span>
+												</li>
+												<li style="padding:5px 10px; cursor:pointer;">
+													<span class="hide_show_button" params="auto_assign_section">Auto Assign Records</span>
+												</li>
+												<!--
+												<li style="padding:5px 10px; cursor:pointer;">
+													<span class="hide_show_button" params="assign_selected_section">Assign Selected Records</span>
+												</li>
+												-->
 											</ul>
 										</div>
                                     </div>                                    
@@ -235,15 +263,15 @@ select.form-control{
     </div>
 </div>
 
-<div id="hide_show_settings" style="display:block; overflow:hidden; z-index:9; position:fixed; top:70px; right:0; height:100%; width:300px; background:#1e2048 ;">
+<div id="hide_show_settings" style="siaplay:hidden;overflow:hidden; z-index:9; position:fixed; top:70px; right:0; height:100%; width:300px; background:#1e2048 ;">
 	<div class="row" style="margin:0px 0px; background-color:#b66dff; padding:5px 10px; color:#FFFFFF">
 		<span class="mdi mdi-settings" style="line-height:28px;">&nbsp;Settings</span>
 		<button class="btn btn-primary btn-sm hide_show_button" style="right:5px; position:absolute; margin-top: -2px;">Hide</button>
 	</div>
 	<div class="row" style="padding:5px 10px;">
 		<div class="col-12">		
-			<table class="table">
-				<tr style="border:0px;display:none" class="activate_section">
+			<table class="table activate_section">
+				<tr style="border:0px;" >
 					<td style="color:#FFFFFF; border:0px">Activate Selected Records</td>
 					<td style=" border:0px">								
 						<select class="form-control input-xs" name="activate_records" id="activate_records">
@@ -252,37 +280,50 @@ select.form-control{
 						</select>
 					</td>
 				</tr>
-				<tr style="border:0px;display:none" class="activate_section">
-					<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-						<button onclick="act_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
-					</td>
-				</tr>					
 				<tr style="border:0px;">
-					<td style="color:#FFFFFF; padding-top:15px">Auto Assign Records to all staff</td>
-					<td style="color:#FFFFFF; padding-top:15px">								
-						<select class="form-control input-xs" id="auto_assign">
-							<option value="0">No</option>
-							<option value="1">Yes</option>
-						</select>
+					<td style="color:#FFFFFF; border:0px; padding-top:25px" colspan="2" class="text-center">
+						<button onclick="act_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
 					</td>
 				</tr>
-				<tr style="border:0px;">
-					<td style="color:#FFFFFF; border:0px;">Select Staff</td>
-					<td>
-						<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple required>
-							<option val="0" selected>ALL STAFF</option>
-						</select>
-					</td>
-				</tr>
-				<tr style="border:0px;">
-					<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-						<button type="button" onclick="auto_assign_rec()" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
-					</td>
-				</tr>
-				<form method="post" action="">
+			</table>
+			<form action="{% url 'auto_assign' %}" method="post">
+				{% csrf_token %}				
+				<input type="hidden" value="{{file_ins}}" name="file_ins">
+				<table class="table auto_assign_section">
 					<tr style="border:0px;">
-						<td style="color:#FFFFFF; padding-top:15px">Assign Selected Records To Staff</td>
-						<td style="padding-top:15px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:15px">Auto Assign Records to all staff</td>
+						<td style="color:#FFFFFF; border:0px; padding-top:15px">								
+							<select class="form-control input-xs" id="auto_assign">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+						</td>
+					</tr>
+					<tr style="border:0px;display:none;" class="auto_assign_section">
+						<td style="color:#FFFFFF; border:0px;">Select Staff</td>
+						<td  style="border:0px;">
+							<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple='multiple' required>
+								<option value="0" selected>ALL STAFF</option>
+								{% for staff in user_list %}
+									<option value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
+								{% endfor %}
+							</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:25px" colspan="2" class="text-center">
+							<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<form action="{% url 'auto_assign' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" value="{{file_ins}}" name="file_ins">
+				<table class="table assign_selected_section">
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:15px">Assign Selected Records To Staff</td>
+						<td style="padding-top:15px; border:0px;">
 						<select class="form-control input-xs">
 							<option value="0">No</option>
 							<option value="1">Yes</option>
@@ -292,23 +333,133 @@ select.form-control{
 					<tr style="border:0px;">
 						<td style="color:#FFFFFF; border:0px;">Staff Name</td>
 						<td style=" border:0px">
-						<select class="form-control input-xs">
-							<option value="0">No</option>
-							<option value="1">Yes</option>
+						<select id="assign_staff" name="auto_assign_staff" class="form-control" required>
+							<option value=""></option>
+							{% for staff in user_list %}
+								<option value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
+							{% endfor %}
 						</select>
 						</td>
 					</tr>
 					<tr style="border:0px;">
-						<td style="color:#FFFFFF; border:0px; padding-bottom:15px" colspan="2" class="text-right">
-							<button type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Save</button>
+						<td style="color:#FFFFFF; border:0px; padding-top:25px" colspan="2" class="text-center">
+							<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
 						</td>
 					</tr>
-				</form>
-			</table>
+				</table>
+			</form>
 		</div>
 	</div>
 </div>
 
+<!-- ADD USER MODAL -->
+
+<div class="modal fade" id="filters_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Filter Records</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -17px;margin-right:-15px;">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+			<form action="" method="get">
+			<div class="modal-body">            
+                <div class="card-body" style="padding:0px">                    
+                    {% csrf_token %}
+					
+					<div class="row">
+                        <div class="col-12">
+							<div class="form-inline">
+								<label class="col-4">Active / Inactive</label>
+								<div class="col-8" style="margin-bottom:10px;">
+									<select class="form-control" name="active" style="color:#000000; width:100%">
+										<option value=''> All </option>
+										<option value='0'> In-Active </option>
+										<option value='1'> Active </option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+                        <div class="col-12">
+							<div class="form-inline">
+								<label class="col-4">Is Assigned</label>
+								<div class="col-8" style="margin-bottom:10px;">
+									<select class="form-control" name="assigned" style="color:#000000; width:100%">
+										<option value=''> All </option>
+										<option value='0'> No </option>
+										<option value='1'> Yes </option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+                        <div class="col-12">
+							<div class="form-inline">
+								<label class="col-4">Industry</label>
+								<div class="col-8" style="margin-bottom:10px;">
+									<select class="form-control" id="id_dedicated_to_category" name="cate" style="color:#000000; width:100%">
+										<option value=''> Any </option>
+										{% for cat in category_list %}
+											<option value="{{cat.id}}">{{cat}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+                        <div class="col-12">
+							<div class="form-inline">
+								<label class="col-4">Sub Industry</label>
+								<div class="col-8" style="margin-bottom:10px;">
+									<select class="form-control" id="id_dedicated_to_sub_category" name="sub_cat" style="color:#000000; width:100%">
+										<option value=''> Any </option>
+										{% for sub_cat in sub_category_list %}
+											<option value="{{sub_cat.id}}">{{sub_cat}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+                        <div class="col-12">
+							<div class="form-inline">
+								<label class="col-4">Brand</label>
+								<div class="col-8" style="margin-bottom:10px;">
+									<select class="form-control" id="id_dedicated_to_brand" name="brand" style="color:#000000; width:100%">
+										<option value=''> Any </option>
+										{% for brand in brand_list %}
+											<option value="{{brand.id}}">{{brand}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row" style="padding-top:10px;">
+                        <div class="col-12 text-right">
+							<button class="btn btn-sm btn-primary">Submit</button>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+																											
+														
+											
 <script>
 	
 	var csrf_token = '{{csrf_token}}';

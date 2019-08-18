@@ -191,12 +191,46 @@
                         </div>
                     </div>           
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
                             <label for="id_username">Email</label>
                             {{staff_form.email}}
                             </div>
                         </div>
+						<div class="col-6">
+							<div class="form-group">
+							<label for="id_dedicated_to_category" style="margin-right:10px; margin-top:7px">Industry</label>
+							<select style="color:#000000" class="form-control" name="dedicated_to_category" id="id_dedicated_to_category">
+								<option value=''> Any </option>
+								{% for cat in category_list %}
+									<option value="{{cat.id}}">{{cat}}</option>
+								{% endfor %}
+							</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+							<label for="id_dedicated_to_sub_category" style="margin-right:10px; margin-top:7px">Sub Industry</label>
+							<select style="color:#000000" class="form-control" name="dedicated_to_sub_category" id="id_dedicated_to_sub_category">
+								<option value=''> Any </option>
+								{% for sub_cat in sub_category_list %}
+									<option value="{{sub_cat.id}}">{{sub_cat}}</option>
+								{% endfor %}
+							</select>
+							</div>
+						</div>
+                        <div class="col-6">
+							<div class="form-group">
+                                <label for="id_dedicated_to_brand" style="margin-right:10px; margin-top:7px">Brand</label>
+                                <select style="color:#000000" class="form-control" name="dedicated_to_brand">
+									{% for brand in brand_list %}
+										<option value="{{brand.id}}">{{brand}}</option>
+									{% endfor %}
+								</select>
+                            </div>
+						</div>
                     </div>
                     <div class="row">
                         <div class="col-12 form-inline">
@@ -211,7 +245,7 @@
                             <div class="form-group" style="margin-left:20px;">
                                 <label for="id_is_superuser" style="margin-right:10px; margin-top:7px">Is-Admin</label>
                                 {{staff_form.is_superuser}}
-                            </div>
+                            </div>							
                         </div>
                     </div>                 
                 </div>

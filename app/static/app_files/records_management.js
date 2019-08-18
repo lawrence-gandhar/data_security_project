@@ -24,10 +24,20 @@ $(function(){
 	//
 	// Hide show settings side bar
 	$(".hide_show_button").click(function(){
-		$("#hide_show_settings").toggle();
-		//$("."+$(this).attr("params")).show();
+		$("#hide_show_settings").find("table").css({"display":"none"})
+		$("#hide_show_settings").toggle();		
+		$("."+$(this).attr("params")).show();
 	});
 	
+	$("select#id_dedicated_to_category").change(function(){
+		if($(this).val()!=''){
+			$.get("/get_sub_category/", {'cat_id':$(this).val()}, function(data){
+				if(data!=''){
+					$("#id_dedicated_to_sub_category").empty().html(data);
+				}
+			});
+		}
+	});
 		
 });
 
@@ -50,5 +60,7 @@ function auto_assign_rec(){
 		location.reload()
 	});
 }
+
+
 	
 

@@ -25,23 +25,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
-
-#*********************************************************************
-# MODEL - USER RECORD PERMISSIONS
-#*********************************************************************
-
-class AppPermission(models.Model):
-    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE, related_name = 'app_permissions')
-    record_access_size = models.BigIntegerField(db_index = True, default = 0,)
-    full_access = models.BooleanField(db_index = True, default = False,)
-    read_only_mode = models.BooleanField(db_index = True, default = True,)
-
-    def __str__(self):
-        return "{0} {1}".format((self.user.first_name).upper(), (self.user.last_name).upper())
-
-    class Meta:
-        db_table = 'user_app_permissions'
-    
+ 
 
 
 @receiver(post_save, sender=User)
@@ -105,6 +89,26 @@ class Brand(models.Model):
 
 
 #*********************************************************************
+# MODEL - USER RECORD PERMISSIONS
+#*********************************************************************
+
+class AppPermission(models.Model):
+    user = models.OneToOneField(User, db_index = True, on_delete = models.CASCADE, related_name = 'app_permissions')
+    record_access_size = models.BigIntegerField(db_index = True, default = 0,)
+    full_access = models.BooleanField(db_index = True, default = False,)
+    read_only_mode = models.BooleanField(db_index = True, default = True,)
+    dedicated_to_category = models.ForeignKey(Category, blank = True, null = True, on_delete = models.SET_NULL, related_name = 'app_permissions_category')
+    dedicated_to_sub_category = models.ForeignKey(Category, blank = True, null = True, on_delete = models.SET_NULL,related_name = 'app_permissions_sub')
+    dedicated_to_brand = models.ForeignKey(Brand, blank = True, null = True, on_delete = models.SET_NULL, related_name = 'app_permissions_brand')
+
+    def __str__(self):
+        return "{0} {1}".format((self.user.first_name).upper(), (self.user.last_name).upper())
+
+    class Meta:
+        db_table = 'user_app_permissions'
+   
+
+#*********************************************************************
 # MODEL - RECORDS MANAGEMENT 
 #*********************************************************************
 
@@ -128,4 +132,4 @@ class RecordsManagement(models.Model):
     class Meta:
         db_table = 'records_tbl'
         
-        
+      

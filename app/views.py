@@ -75,16 +75,21 @@ class Dashboard(View):
 
 class StaffManagement(View):
     template_name = 'app/staff_management/index.html'
+    js_files = ['app_files/staff_management.js']
 
     def get(self, request):
 
         page = request.GET.get('page',1)
         records_per_page = request.GET.get('per_page',None)
-
+        
         return render(request, self.template_name, {
             "users": user_helper.UserList(page,records_per_page), 
             'staff_form': StaffForm(),
+            'category_list' : records_helper.CategoryList(),
+            'sub_category_list' : records_helper.SubCategoryList(),
+            'brand_list' : records_helper.BrandList(),
             'error_msg': None, 
+            'js_files' : self.js_files,
         })
 
 
@@ -96,15 +101,55 @@ class StaffManagement(View):
             user = staff.save(commit=False)
             user.password = make_password(staff.cleaned_data['password'])
             user.save()
-
+            
+            app_perm = AppPermission.objects.get(user = user)
+            
+            if request.POST["dedicated_to_category"] != "":
+                category = Category.objects.get(pk = request.POST["dedicated_to_category"])                
+                app_perm.dedicated_to_category = category
+                app_perm.save()
+            else:
+                app_perm.dedicated_to_category = None
+                app_perm.save()
+                
+            if request.POST["dedicated_to_sub_category"] != "":
+                sub_category = Category.objects.get(pk = request.POST["dedicated_to_sub_category"])
+                app_perm.dedicated_to_sub_category = sub_category
+                app_perm.save()
+            else:
+                app_perm.dedicated_to_sub_category = None
+                app_perm.save()
+            
+            if request.POST["dedicated_to_brand"] != "":
+                brand = Brand.objects.get(pk = request.POST["dedicated_to_brand"])
+                app_perm.dedicated_to_brand = brand
+                app_perm.save()
+            else:
+                app_perm.dedicated_to_brand = None
+                app_perm.save()
+                
             return redirect('/staff-management/', 'refresh')
 
         return render(request, self.template_name, {
             "users": user_helper.UserList(), 
             'staff_form': StaffForm(),
             'error_msg' : 'Not a valid form! Try again',
+            'js_files' : self.js_files,
         })
 
+#=========================================================================================
+#   GET SUB CATEGORY ON BASIS OF CATEGORY
+#=========================================================================================
+
+def get_sub_category(request):
+    if request.GET["cat_id"] != "":
+        sub_cats = records_helper.SubCategoryList(request.GET["cat_id"])
+        
+        html = ['<option value="''">Any</option>']
+        for sub in sub_cats:
+            html.append('<option value="'+str(sub.id)+'">'+str(sub)+'</option>');
+        return HttpResponse(''.join(html))
+    return HttpResponse('')   
 
 #=========================================================================================
 #   STAFF/USER EDIT
@@ -112,6 +157,8 @@ class StaffManagement(View):
 
 class EditStaff(View):
     template_name = 'app/staff_management/edit_staff.html'
+    js_files = ['app_files/staff_management.js']
+    
 
     def get(self, request, *args, **kwargs):
         staff = user_helper.UserDetailsObject(kwargs["user_id"]) 
@@ -134,20 +181,24 @@ class EditStaff(View):
             profile = UserProfile.objects.create(user=staff)
             profile = profile.refresh_from_db()
             user_profile = ProfileForm(instance = profile, prefix='profile')
-
+            
         return render(request, self.template_name, {
             'staff_form': staff_form, 
             'user_profile': user_profile,
             'app_permission':app_permission,
             'error_msg': None, 
             'staff':staff,
+            'category_list' : records_helper.CategoryList(),
+            'sub_category_list' : records_helper.SubCategoryList(),
+            'brand_list' : records_helper.BrandList(),
+            'js_files' : self.js_files,
         })
 
 
     def post(self, request, *args, **kwargs):
 
         user = user_helper.UserDetailsObject(kwargs["user_id"]) 
-
+        
         if user is None:
             return HttpResponseForbidden()
 
@@ -161,6 +212,33 @@ class EditStaff(View):
             staff.profile = user_profile.save()
             staff.app_permissions = app_permission.save()
             staff.save()
+            
+            app_perm = AppPermission.objects.get(user = user)
+            
+            if request.POST["dedicated_to_category"] != "":
+                category = Category.objects.get(pk = request.POST["dedicated_to_category"])                
+                app_perm.dedicated_to_category = category
+                app_perm.save()
+            else:
+                app_perm.dedicated_to_category = None
+                app_perm.save()
+                
+            if request.POST["dedicated_to_sub_category"] != "":
+                sub_category = Category.objects.get(pk = request.POST["dedicated_to_sub_category"])
+                app_perm.dedicated_to_sub_category = sub_category
+                app_perm.save()
+            else:
+                app_perm.dedicated_to_sub_category = None
+                app_perm.save()
+            
+            if request.POST["dedicated_to_brand"] != "":
+                brand = Brand.objects.get(pk = request.POST["dedicated_to_brand"])
+                app_perm.dedicated_to_brand = brand
+                app_perm.save()
+            else:
+                app_perm.dedicated_to_brand = None
+                app_perm.save()
+                        
             return redirect('/staff-management/', parmanent = True)
         else:
             return render(request, self.template_name, {
@@ -169,6 +247,10 @@ class EditStaff(View):
                 'app_permission':app_permission,
                 'error_msg': None, 
                 'staff':user,
+                'category_list' : records_helper.CategoryList(),
+                'sub_category_list' : records_helper.SubCategoryList(),
+                'brand_list' : records_helper.BrandList(),
+                'js_files' : self.js_files,
             })
 
         
@@ -187,8 +269,20 @@ class RecordManagement(View):
         page = request.GET.get('page',1)
         records_per_page = request.GET.get('per_page',None)
         load_file = request.GET.get('load_file', None) 
-
-        file_ins, records = records_helper.RecordsList(page, records_per_page, load_file)
+        
+        #
+        #   filters
+        #
+        
+        kwargs = {
+            "active" : request.GET.get('active', None),
+            "assigned" : request.GET.get('assigned', None),
+            "cate" : request.GET.get('cate', None),
+            "sub_cat" : request.GET.get('sub_cat', None),
+            "brand" : request.GET.get('brand', None),
+        }
+        
+        file_ins, records = records_helper.RecordsList(page, records_per_page, load_file, kwargs)
 
         records_file_list = records_helper.RecordsFileList()
 
@@ -198,6 +292,11 @@ class RecordManagement(View):
             "file_ins" : '',
             "records_file_list" : records_file_list,
             "js_files" : self.js_files,
+            "user_list" : user_helper.StaffList(),
+            'category_list' : records_helper.CategoryList(),
+            'sub_category_list' : records_helper.SubCategoryList(),
+            'brand_list' : records_helper.BrandList(),
+            'error_msg': None, 
         }
 
         if load_file is not None:
@@ -257,22 +356,26 @@ def activate_records(request):
 # AUTO ASSIGN RECORDS
 #=========================================================================================    
 def auto_assign(request):
-    opt = request.GET.get('opt',False)
-    file_ins = request.GET.get('file_ins',None)
+    opt = request.POST.get('opt',False)
+    file_ins = request.POST.get('file_ins',None)
+    auto_assign_staff = request.POST.getlist('auto_assign_staff', list())
     
     if opt == '0':
         opt = False
     else:
         opt = True
+        
+    if '0' in auto_assign_staff:
+        auto_assign_staff = [0]
 
     if file_ins is not None and opt:
-        records_helper.AutoAssignRecords(file_ins, opt)
+        records_helper.AutoAssignRecords(file_ins, opt, auto_assign_staff)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
 
 
 #=========================================================================================
-# AUTO ASSIGN RECORDS
+# STAFF/USER RECORD
 #=========================================================================================  
 class StaffRecord(View):
 
@@ -297,7 +400,7 @@ class StaffRecord(View):
         record = RecordsManagement.objects.get(pk = request.POST["record_id"])
         
         record.remarks = request.POST["remarks"]
-        record.remarked_on = timezone.now()
+        record.remark_added_on = timezone.now()
         record.disposition = 1
         
         record.save()
