@@ -127,7 +127,7 @@ def BrandList(cat = None, sub_cat = None):
 # Records List
 # ==========================================================================================
 # 
-def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = {}):
+def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = None):
 
     if file_ins is None:
         try:
@@ -142,7 +142,9 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
 
     records = RecordsManagement.objects.filter(record_file = file_ins)
     
-    if len(kwargs) > 0:
+    if kwargs is not None:
+    
+        print(kwargs)
         
         if kwargs["active"]!='':
             records = records.filter(is_active = kwargs["active"])
@@ -157,12 +159,14 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
             records = records.filter(sub_category_id = kwargs["sub_cat"])
             
         if kwargs["brand"]!='':
-            records = records.filter(brand_id = int(kwargs["brand"]))
+            records = records.filter(brand_id = kwargs["brand"])
     
     records = records.select_related('category', 'sub_category','brand', 'record_file',)
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
                 'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 'assigned_on').order_by('id')
+
+    print(records.query)
 
     per_page = 10
     if records_per_page is not None:
@@ -207,9 +211,9 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
             app_perm = User.objects.filter(pk__in = staff_list)
             
         app_perm = app_perm.select_related('app_permissions')        
-        app_perm = app_perm.values('id', 'app_permissions__record_access_size', 'app_permissions__dedicated_to_category',
+        app_perm = app_perm.values('id', 'app_permissions__full_access', 'app_permissions__record_access_size', 'app_permissions__dedicated_to_category',
                         'app_permissions__dedicated_to_sub_category', 'app_permissions__dedicated_to_brand')
-
+                        
         try:
             file_ins = FileSubmission.objects.get(pk = int(file_ins))        
         except:
@@ -217,6 +221,7 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
             return False
         
         for user in app_perm:
+            
             ret, buff_size = PreviousAssignmentsExists(user["id"], file_ins)
             
             if not ret:
@@ -232,7 +237,11 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
                 if user["app_permissions__dedicated_to_brand"] is not None:
                     records = records.filter(brand = user["app_permissions__dedicated_to_brand"])
                 
-                records = records.values()[:buff_size]
+                if user["app_permissions__full_access"]:
+                    records = records.values()
+                else:
+                    records = records.values()[:buff_size]
+                             
                 
                 for record in records:
                     

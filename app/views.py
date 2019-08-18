@@ -274,13 +274,22 @@ class RecordManagement(View):
         #   filters
         #
         
-        kwargs = {
-            "active" : request.GET.get('active', None),
-            "assigned" : request.GET.get('assigned', None),
-            "cate" : request.GET.get('cate', None),
-            "sub_cat" : request.GET.get('sub_cat', None),
-            "brand" : request.GET.get('brand', None),
-        }
+        active = request.GET.get('active', None)
+        assigned = request.GET.get('assigned',None)
+        cate = request.GET.get('cate', None)
+        sub_cat = request.GET.get('sub_cat', None)
+        brand = request.GET.get('brand', None)
+        
+        if(active is None and assigned is None and cate is None and sub_cat is None and brand is None):
+            kwargs = None
+        else:
+            kwargs = {
+                "active" : active,
+                "assigned" : assigned,
+                "cate" : cate,
+                "sub_cat" : sub_cat,
+                "brand" : brand,
+            }
         
         file_ins, records = records_helper.RecordsList(page, records_per_page, load_file, kwargs)
 
