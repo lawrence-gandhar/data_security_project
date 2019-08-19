@@ -89,6 +89,20 @@ class Brand(models.Model):
 
 
 #*********************************************************************
+# MODEL - BRANDS 
+#*********************************************************************
+
+class PreviousExhibition(models.Model):
+    name = models.CharField(max_length = 250, unique = True, blank = False, null = False,)
+    is_active = models.BooleanField(db_index = True, default = True)
+    
+    def __str__(self):
+        return "{0}".format(self.name)
+
+    class Meta:
+        db_table = 'previous_exhibition_tbl'
+
+#*********************************************************************
 # MODEL - USER RECORD PERMISSIONS
 #*********************************************************************
 
