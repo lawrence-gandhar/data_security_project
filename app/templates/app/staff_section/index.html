@@ -68,7 +68,7 @@ p{padding: 5px 0px; margin-bottom:0px;}
 											<strong>Contact Person</strong>: {{rec.contact_person}}
 										</td>
 										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Phone</strong>: {{rec.phone}}
+											<strong>Phone</strong>: {{rec.contact_number}}
 										</td>
 										<td style="font-size:1rem; padding:10px 0px">
 											<strong>Email</strong>: {{rec.email}}
@@ -77,6 +77,21 @@ p{padding: 5px 0px; margin-bottom:0px;}
 									<tr>
 										<td style="font-size:1rem; padding:5px 0px" colspan="3"><strong>Remarks</strong>:
 											<textarea required style="margin-top:10px;" name="remarks" class="form-control" rows="10"></textarea>
+										</td>
+									</tr>
+									<tr>
+										<td style="font-size:1rem; padding:5px 0px" colspan="3"><strong>Dispositions</strong>:
+											<select name="disposition" style="color:#000000;">
+												<option value="1">Call Completed Successfully</option>
+												<option value="2">Call Rejected</option>
+												<option value="3">Call Disconnected</option>
+												<option value="4">Wrong Number</option>
+												<option value="5">Answering Machine</option>
+												<option value="6">Call Later</option>
+												<option value="7">Do Not Call Again</option>
+												<option value="8">Not Answering</option>
+												<option value="9">Details Are Incorrect</option>
+											</select>
 										</td>
 									</tr>
 									<tr>
@@ -90,7 +105,8 @@ p{padding: 5px 0px; margin-bottom:0px;}
 							
 						</form>
 						{% empty %}
-						No More Records Found.
+						No More Records Found. Please wait records will be assigned to you shortly as the previously assigned records to you, 
+						are yet to be scrutinized and approved.
 						{% endfor %}
 					</div>
 				</div>

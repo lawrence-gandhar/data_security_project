@@ -410,7 +410,7 @@ class StaffRecord(View):
         
         record.remarks = request.POST["remarks"]
         record.remark_added_on = timezone.now()
-        record.disposition = 1
+        record.disposition = request.POST["disposition"]
         
         record.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
