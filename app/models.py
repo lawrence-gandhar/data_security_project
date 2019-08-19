@@ -142,7 +142,7 @@ class RecordsManagement(models.Model):
     remark_added_on = models.DateTimeField(null = True, db_index = True,)
     is_completed = models.BooleanField(default = False, db_index = True,)
     disposition = models.IntegerField(default = 0, db_index = True,)
-
+    previous_exhibition = models.ForeignKey(PreviousExhibition, db_index = True, blank = True, null = True, on_delete = models.SET_NULL) 
     class Meta:
         db_table = 'records_tbl'
         
