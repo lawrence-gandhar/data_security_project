@@ -52,7 +52,7 @@ select.form-control{
 
 </style>
 
-<div class="main-panel">          
+<div class="main-panel" style="width:100%; overflow:scroll;">          
     <div class="content-wrapper">
         {% if messages %}
             <div class="row alert alert-danger alert-dismissible" role="alert">
@@ -101,14 +101,13 @@ select.form-control{
                 <div class="card">
                     <div class="card-body" style="overflow-x:scroll">
                         <div class="row" style="padding:0px; margin:10px 0px">
-                            <div class="col-4" style="display:block"></div>
-                            <div class="col-8">
+                            <div class="col-6" style="padding:0px">
                                 <form action="" method="get">
                                 <div class="form-inline">
-                                    <label style="font-size: 80%; text-align:right; padding:0px 0px;" class="col-4">
+									<label style="font-size: 80%; text-align:right; padding:0px 0px;" class="col-3">
                                         Select Records File
-                                    </label>
-                                    <div class="col-8 input-group" style="padding:0px 0px">
+									</label>
+                                    <div class="col-9 input-group" style="padding:0px 0px">
                                         <select style="border-radius: 0px;" class="form-control" id="load_data_opt" name="load_file">
                                             {% for records_file in records_file_list %}
                                                 <option {% if file_ins == records_file.id %} selected {% endif %} value="{{ records_file.id }}">{{ records_file.record_file_name }}</option>
@@ -227,7 +226,7 @@ select.form-control{
 										</tr>
 									{% empty %}
 										<tr>
-											<td colspan="50">No Records</td>
+											<td colspan="50" style="padding:10px 10px">No Records</td>
 										</tr>
 									{% endfor %}
                             </tbody>
