@@ -8,7 +8,8 @@ def UserList(page = None, records_per_page = None):
     users = users.values('id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser', 'is_active', 
             'app_permissions__record_access_size', 'app_permissions__full_access', 'app_permissions__read_only_mode',
             'profile__profile_pic', 'profile__phone', 'app_permissions__dedicated_to_category', 
-            'app_permissions__dedicated_to_sub_category', 'app_permissions__dedicated_to_brand'
+            'app_permissions__dedicated_to_sub_category', 'app_permissions__dedicated_to_brand',
+            'profile__profile_pic', 'profile__phone',
         ).order_by('id')
 
     per_page = 25
