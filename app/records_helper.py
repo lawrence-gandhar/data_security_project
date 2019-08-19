@@ -163,7 +163,7 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
                 'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
-                'assigned_on','is_completed','disposition').order_by('id')
+                'assigned_on', 'is_completed','disposition', 'previous_exhibition').order_by('id')
 
     per_page = 10
     if records_per_page is not None:
@@ -285,7 +285,7 @@ def GetRecord(user_id):
     record_fetch = record_fetch.select_related('category', 'sub_category','brand', 'record_file',)
     record_fetch = record_fetch.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
-                'remark_added_on', 'disposition').order_by('id')   
+                'remark_added_on', 'disposition', 'previous_exhibition').order_by('id')   
 
 
     record_remarked_count = records.exclude(disposition = 0).count()
