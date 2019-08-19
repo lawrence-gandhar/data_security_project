@@ -154,7 +154,8 @@ select.form-control{
                                 <td style="padding:10px;">Is Active</td>
                                 <td style="padding:10px;">Industry</td>
                                 <td style="padding:10px;">Sub Industry</td>
-                                <td style="padding:10px;">Brand Name</td>
+								<td style="padding:10px;">Brand Name</td>
+								<td style="padding:10px;">Prev. Exhibition</td>
                                 <td style="padding:10px;">Contact Person</td>
                                 <td style="padding:10px;">Contact No</td>
                                 <td style="padding:10px;">Email ID</td>
@@ -180,6 +181,7 @@ select.form-control{
 											<td>{{ rec.category__category_name|title|safe }}</td>
 											<td>{{ rec.sub_category__category_name|title|safe }}</td>
 											<td>{{ rec.brand__brand_name|title|safe }}</td>
+											<td>{{ rec.previous_exhibition__name|title|safe }}</td>
 											<td>{{ rec.contact_person|title|safe }}</td>
 											<td>{{ rec.contact_number|safe }}</td>
 											<td>{{ rec.email|safe }}</td>
