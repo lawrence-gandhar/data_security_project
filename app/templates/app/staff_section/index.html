@@ -10,18 +10,9 @@
 p{padding: 5px 0px; margin-bottom:0px;}
 </style>
 
-<div class="main-panel">          
+<div class="main-panel" style="width:100%">          
     <div class="content-wrapper">
-        {% if messages %}
-            <div class="row alert alert-danger alert-dismissible" role="alert">
-                {% for message in messages %}
-                    <p>{{ message|safe }}</p>
-                {% endfor %}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% endif %}
+        
         {% if error_msg is not None %}
             <div class="row alert alert-danger alert-dismissible" role="alert">
                 {{error_msg|safe}}
@@ -39,83 +30,72 @@ p{padding: 5px 0px; margin-bottom:0px;}
             <div class="col-12 grid-margin stretch-card" style="padding:0px 0px; margin-bottom:10px">
                 <div class="card">
                     <div class="card-body" style="overflow:auto">
-						{% for rec in records %}
-						<form action="" method="post">
-							{% csrf_token %}
-							<input type="hidden" value="{{ rec.id }}" name="record_id">
-						
-							<div class="col-12">
-								<p><strong>Record ID :</strong> {{rec.id}}</p> 
-								<p><strong>Loaded From :</strong> {{rec.record_file__record_file_name}}</p>
-								<p><strong>Assigned On. :</strong> {{rec.assigned_on|date:'D, d M Y'}}</p>
-							</div>
-							<div class="col-12">
-							
-								<table class="table" style="margin-top:10px">
-									<tr>
-										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Industry</strong>: {{rec.category__category_name}}
-										</td>
-										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Sub Industry</strong>: {{rec.sub_category__category_name}}
-										</td>
-										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Brand</strong>: {{rec.brand__brand_name}}
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Contact Person</strong>: {{rec.contact_person}}
-										</td>
-										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Phone</strong>: {{rec.contact_number}}
-										</td>
-										<td style="font-size:1rem; padding:10px 0px">
-											<strong>Email</strong>: {{rec.email}}
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:1rem; padding:5px 0px" colspan="3"><strong>Remarks</strong>:
-											<textarea required style="margin-top:10px;" name="remarks" class="form-control" rows="10"></textarea>
-										</td>
-									</tr>
-									<tr>
-										<td style="font-size:1rem; padding:5px 0px" colspan="3"><strong>Dispositions</strong>:
-											<select name="disposition" style="color:#000000;">
-												<option value="1">Call Completed Successfully</option>
-												<option value="2">Call Rejected</option>
-												<option value="3">Call Disconnected</option>
-												<option value="4">Wrong Number</option>
-												<option value="5">Answering Machine</option>
-												<option value="6">Call Later</option>
-												<option value="7">Do Not Call Again</option>
-												<option value="8">Not Answering</option>
-												<option value="9">Details Are Incorrect</option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td colspan="3" class="text-right" style="border-top:0px; padding-top:10px">
-											<button class="btn btn-xs btn-success">Save</button>
-										</td>
-									</tr>
-								</table>
-							</div>
-							
-							
-						</form>
-						{% empty %}
-						No More Records Found. Please wait records will be assigned to you shortly as the previously assigned records to you, 
-						are yet to be scrutinized and approved.
-						{% endfor %}
+						<table class="table table-bordered table-stripped" style="margin-bottom:0px;font-size:85%">
+                            <thead class="text-center">
+                                <td style="padding:10px;">Rec ID</td>
+                                <td style="padding:10px;">Is Active</td>
+                                <td style="padding:10px;">Industry</td>
+                                <td style="padding:10px;">Sub Industry</td>
+                                <td style="padding:10px;">Brand Name</td>
+                                <td style="padding:10px;">Contact Person</td>
+                                <td style="padding:10px;">Contact No</td>
+                                <td style="padding:10px;">Email ID</td>
+                                <td style="padding:10px;">Remarks</td>
+								<td style="padding:10px;">Assigned On</td> 								
+                                <td style="padding:10px;">Remarked On</td>
+								<td style="padding:10px;">Disposition</td>
+								<td style="padding:10px;">Is Approved</td>
+                                <td style="padding:10px;">Action</td>
+                            </thead>
+                            <tbody>
+								{% for rec in records %}
+								
+								<tr>
+									<td class="text-center">{{rec.id}}</td>
+									<td class="text-center">{% tick_mark rec.is_active %}</td>
+									<td>{{ rec.category__category_name|title|safe }}</td>
+									<td>{{ rec.sub_category__category_name|title|safe }}</td>
+									<td>{{ rec.brand__brand_name|title|safe }}</td>
+									<td>{{ rec.contact_person|title|safe }}</td>
+									<td>{{ rec.contact_number|safe }}</td>
+									<td>{{ rec.email|safe }}</td>
+									<td>
+										{% if  rec.remarks is not None %}
+										{{rec.remarks|safe}}
+										{% endif %}
+									</td>
+									<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
+									<td>{{rec.assigned_on|date:'D, d M Y'}}</td>
+									<td>{{rec.remark_added_on|date:'D, d M Y'}}</td>
+									<td>
+										{% if rec.disposition == 1 %} Call Completed Successfully
+										{% elif rec.disposition == 2 %} Call Rejected
+										{% elif rec.disposition == 3 %} Call Disconnected
+										{% elif rec.disposition == 4 %} Wrong Number
+										{% elif rec.disposition == 5 %} Answering Machine
+										{% elif rec.disposition == 6 %} Call Later
+										{% elif rec.disposition == 7 %} Do Not Call Again
+										{% elif rec.disposition == 8 %} Not Answering
+										{% elif rec.disposition == 9 %} Details Are Incorrect
+										{% endif %}
+									</td>
+									<td class="text-center">
+										<a href="#" class="btn btn-xs btn-success" style="padding: 0.25rem 0.25rem; font-size:10px">
+											<i class="mdi mdi-lead-pencil"></i>
+										</a>
+									</td>
+								</tr>
+								{% empty %}
+									No More Records Found. Please wait records will be assigned to you shortly as the 
+									previously assigned records to you, are yet to be scrutinized and approved.
+								{% endfor %}							
+							</tbody>
+						</table>
 					</div>
-				</div>
-			</div>
-		</div>
-		
-		
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 
 {% endblock %}

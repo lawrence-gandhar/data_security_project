@@ -284,15 +284,14 @@ def GetRecord(user_id):
     record_fetch = records.filter(disposition = 0)
     record_fetch = record_fetch.select_related('category', 'sub_category','brand', 'record_file',)
     record_fetch = record_fetch.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
-                'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on').order_by('id')[:1]   
+                'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
+                'remark_added_on', 'disposition').order_by('id')   
 
 
     record_remarked_count = records.exclude(disposition = 0).count()
     pending_records = records.count()
     
-    
     return record_fetch, record_remarked_count, pending_records
-    
     
     
     

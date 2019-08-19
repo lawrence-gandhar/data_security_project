@@ -397,10 +397,7 @@ class StaffRecord(View):
             
             record_fetch, record_remarked_count, pending_records = records_helper.GetRecord(request.user)
         
-            if pending_records == 0:
-                self.context["error_msg"] = "No Records are assigned to you."
-            else:
-                self.context["records"] = record_fetch
+            self.context["records"] = record_fetch
             
         return render(request, self.template_name, self.context)      
         
