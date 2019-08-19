@@ -165,6 +165,7 @@ select.form-control{
                                 <td style="padding:10px;">Added On</td>  
 								<td style="padding:10px;">Assigned On</td> 								
                                 <td style="padding:10px;">Remarked On</td>
+								<td style="padding:10px;">Disposition</td>
 								<td style="padding:10px;">Is Approved</td>
                                 <td style="padding:10px;">Action</td>
                             </thead>
@@ -197,6 +198,18 @@ select.form-control{
 											<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
 											<td>{{rec.assigned_on|date:'D, d M Y'}}</td>
 											<td>{{rec.remark_added_on|date:'D, d M Y'}}</td>
+											<td>
+												{% if rec.disposition == 1 %} Call Completed Successfully
+												{% elif rec.disposition == 2 %} Call Rejected
+												{% elif rec.disposition == 3 %} Call Disconnected
+												{% elif rec.disposition == 4 %} Wrong Number
+												{% elif rec.disposition == 5 %} Answering Machine
+												{% elif rec.disposition == 6 %} Call Later
+												{% elif rec.disposition == 7 %} Do Not Call Again
+												{% elif rec.disposition == 8 %} Not Answering
+												{% elif rec.disposition == 9 %} Details Are Incorrect
+												{% endif %}
+											</td>
 											<td class="text-center">{% tick_mark rec.is_completed %}</td>
 											<td class="text-center">
 											    {% if rec.is_assigned and rec.remarks is not None %}
