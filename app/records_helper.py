@@ -29,8 +29,9 @@ def insert_into_db(file_ins, file_path):
         category = sheet_obj.cell(row = row, column = 1).value
         sub_category = sheet_obj.cell(row = row, column = 2).value
         brand = sheet_obj.cell(row = row, column = 3).value
+        pe = sheet_obj.cell(row = row, column = 7).value
 
-        cat, sub_cat, brand_ins = category_sub_brand_insertion(category, sub_category, brand)
+        cat, sub_cat, brand_ins, pe_ins = category_sub_brand_insertion(category, sub_category, brand, pe)
        
         record = RecordsManagement(
             record_file = file_ins,
@@ -38,6 +39,7 @@ def insert_into_db(file_ins, file_path):
             category = cat,
             sub_category = sub_cat,
             brand = brand_ins,
+            previous_exhibition = pe_ins,
             contact_person = sheet_obj.cell(row = row, column = 4).value,
             contact_number = sheet_obj.cell(row = row, column = 5).value,
             email = sheet_obj.cell(row = row, column = 6).value,
@@ -53,11 +55,12 @@ def insert_into_db(file_ins, file_path):
 # ==========================================================================================
 # 
 
-def category_sub_brand_insertion(category, sub_category, brand):
+def category_sub_brand_insertion(category, sub_category, brand, pe):
     
     cat = None
     sub_cat = None
     brand_ins = None
+    pe_ins = None
 
     try:
         cat_insert = Category(
@@ -99,8 +102,21 @@ def category_sub_brand_insertion(category, sub_category, brand):
         brand_ins = brand_insert.save()
     except IntegrityError: 
         brand_ins = Brand.objects.get(brand_name = brand.strip())
+
+    #===========================================================================================
+    #   Brands Insertion
+    #===========================================================================================
+
+    try:
+        pe_insert = PreviousExhibition(
+            name = pe.strip(),
+        )
+
+        pe_ins = pe_insert.save()
+    except IntegrityError: 
+        pe_ins = PreviousExhibition.objects.get(name = pe.strip())
     
-    return cat, sub_cat, brand_ins
+    return cat, sub_cat, brand_ins, pe_ins
 
 
 #==========================================================================================
