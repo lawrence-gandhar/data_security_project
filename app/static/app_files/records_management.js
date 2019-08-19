@@ -61,6 +61,10 @@ function auto_assign_rec(){
 	});
 }
 
-
+function set_completed(status, rec_id){
+	$.get("/set_completed/",{"status":status, "rec_id":rec_id}, function(data){
+		location.reload();
+	})
+}
 	
 

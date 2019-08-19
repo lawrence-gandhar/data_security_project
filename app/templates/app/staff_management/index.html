@@ -88,7 +88,7 @@
                                 <td style="padding:10px;">Full Access</td>
                                 <td style="padding:10px;">Read Only</td>
                                 <td style="padding:10px;">Records Accessible</td>                                
-                                <td style="padding:10px;">Completed</td>
+                                
                                 <td style="padding:10px;">Action</td>
                             </thead>
                             {% for user in users %}
@@ -120,7 +120,7 @@
                                 <td class="text-center">{% tick_mark user.app_permissions__full_access %}</td>
                                 <td class="text-center">{% tick_mark user.app_permissions__read_only_mode %}</td>
                                 <td class="text-center">{{ user.app_permissions__record_access_size }}</td>
-                                <td>0 / {{ user.app_permissions__record_access_size }}</td>
+                                
                                 <td class="text-center">
                                     <a href="{% url 'edit_staff' user.id %}" class="btn btn-xs btn-success" style="padding: 0.25rem 0.25rem; font-size:10px">
                                         <i class="mdi mdi-lead-pencil"></i>

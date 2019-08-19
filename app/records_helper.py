@@ -164,9 +164,8 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
     records = records.select_related('category', 'sub_category','brand', 'record_file',)
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
-                'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 'assigned_on').order_by('id')
-
-    print(records.query)
+                'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
+                'assigned_on','is_completed').order_by('id')
 
     per_page = 10
     if records_per_page is not None:
@@ -244,13 +243,14 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
                              
                 
                 for record in records:
-                    
-                    rec = RecordsManagement.objects.get(pk = record["id"])
-                    rec.assigned_to_id = user["id"]
-                    rec.assigned_on = timezone.now()
-                    rec.is_assigned = opt
-                    rec.save()         
-        
+                    try:
+                        rec = RecordsManagement.objects.get(pk = record["id"])
+                        rec.assigned_to_id = user["id"]
+                        rec.assigned_on = timezone.now()
+                        rec.is_assigned = opt
+                        rec.save()         
+                    except:
+                        pass
 
 #===========================================================================================
 # CHECK PREVIOUS ASSIGNMENTS OF RECORDS TO USER IN THE SAME FILE/SLOT 
@@ -264,7 +264,11 @@ def PreviousAssignmentsExists(user_id, file_ins):
                 assigned_to = user_id) 
     
     completed_records = records.filter(is_completed = True).count()
-    all_records = records.count()
+    
+    if completed_records >= app_perm.app_permissions.record_access_size:
+        all_records = 0
+    else:
+        all_records = records.count()
     
     if all_records == app_perm.app_permissions.record_access_size and completed_records < app_perm.app_permissions.record_access_size:
         return True, 0

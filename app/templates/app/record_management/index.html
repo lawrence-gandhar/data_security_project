@@ -165,6 +165,7 @@ select.form-control{
                                 <td style="padding:10px;">Added On</td>  
 								<td style="padding:10px;">Assigned On</td> 								
                                 <td style="padding:10px;">Remarked On</td>
+								<td style="padding:10px;">Is Approved</td>
                                 <td style="padding:10px;">Action</td>
                             </thead>
                             <tbody>
@@ -196,7 +197,20 @@ select.form-control{
 											<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
 											<td>{{rec.assigned_on|date:'D, d M Y'}}</td>
 											<td>{{rec.remark_added_on|date:'D, d M Y'}}</td>
-											<td>abcd</td>
+											<td class="text-center">{% tick_mark rec.is_completed %}</td>
+											<td class="text-center">
+											    {% if rec.is_assigned and rec.remarks is not None %}
+												{% if rec.is_completed %} 
+												<button type="button" onclick="set_completed(0, {{rec.id}})" class="btn btn-success btn-xs" style="padding:2px" title="Do not approve">
+													<span style="font-size:20px; padding:0px;" class="mdi mdi-star-circle"></span>
+												</button>
+												{% else %}
+												<button type="button" onclick="set_completed(1, {{rec.id}})" class="btn btn-danger btn-xs" style="padding:2px" title="Approve">
+													<span style="font-size:20px; padding:0px;" class="mdi mdi-star-circle"></span>
+												</button>
+												{% endif %}
+												{% endif %}
+											</td>
 										</tr>
 									{% empty %}
 										<tr>
@@ -365,9 +379,7 @@ select.form-control{
             </div>
 			<form action="" method="get">
 			<div class="modal-body">            
-                <div class="card-body" style="padding:0px">                    
-                    {% csrf_token %}
-					
+                <div class="card-body" style="padding:0px">                    					
 					<div class="row">
                         <div class="col-12">
 							<div class="form-inline">

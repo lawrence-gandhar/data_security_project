@@ -416,4 +416,18 @@ class StaffRecord(View):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
     
     
+def set_completed(request):
+
+    status = False
+    rec_id = request.GET["rec_id"]
     
+    if request.GET["status"] == '1':
+        status = True
+    
+    try:
+        rec = RecordsManagement.objects.get(pk = rec_id) 
+        rec.is_completed = status
+        rec.save()
+    except:
+        pass
+    return HttpResponse('')
