@@ -297,8 +297,8 @@ def PreviousAssignmentsExists(user_id, file_ins):
 def GetRecord(user_id):
     records = RecordsManagement.objects.filter(assigned_to = user_id, is_completed = False)
     
-    record_fetch = records.filter(disposition = 0)
-    record_fetch = record_fetch.select_related('category', 'sub_category','brand', 'record_file','previous_exhibition')
+    #record_fetch = records.filter(disposition = 0)
+    record_fetch = records.select_related('category', 'sub_category','brand', 'record_file','previous_exhibition')
     record_fetch = record_fetch.values('id', 'is_active' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
                 'remark_added_on', 'disposition', 'previous_exhibition__name', 'is_completed').order_by('id')   

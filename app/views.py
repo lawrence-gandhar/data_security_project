@@ -420,12 +420,15 @@ class StaffRecord(View):
     def post(self, request, *args, **kwargs):
         record = RecordsManagement.objects.get(pk = request.POST["record_id"])
         
+        record.contact_person = request.POST["contact_person"]
+        record.contact_number = request.POST["contact_number"]
+        record.email = request.POST["email"]
         record.remarks = request.POST["remarks"]
         record.remark_added_on = timezone.now()
         record.disposition = request.POST["disposition"]
         
         record.save()
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/staff-record/'))
 
     
 #=========================================================================================
@@ -454,12 +457,14 @@ def set_completed(request):
 def get_record_details(request):
 
     rec_id = request.GET['rec_id']
-    rec = RecordsManagement.objects.filter(pk = rec_id).values('contact_person', 'contact_number', 
+    rec = RecordsManagement.objects.filter(pk = rec_id).values('id','contact_person', 'contact_number', 
             'email', 'disposition', 'remarks')
     
     return JsonResponse({'rec':list(rec)})
     
-    
+#=========================================================================================     
+# 
+#=========================================================================================     
     
     
     
