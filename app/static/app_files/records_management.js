@@ -66,5 +66,18 @@ function set_completed(status, rec_id){
 		location.reload();
 	})
 }
+
+function delete_file_data(){
+	
+	var r = confirm("ALERT! Use only if data insertion is not as expected, or, wrong data insertion, or None fields are inserted even if there is data in the excel file");
+	
+	if (r == true) {
+	  file_ins = $("#load_data_opt").val();
+		$.get("/delete_file_data/",{'file_ins':file_ins},function(){
+			location.reload();
+		});
+	}
+		
+}
 	
 

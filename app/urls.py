@@ -23,4 +23,6 @@ urlpatterns = [
     path('staff-record/<int:record_id>/', never_cache(login_required(StaffRecord.as_view())), name='staff_record'),
     path('get_sub_category/', login_required(get_sub_category), name='get_sub_category'),
     path('set_completed/', login_required(set_completed), name='set_completed'),
+    path('delete_file_data/', login_required(delete_file_data), name='delete_file_data'),
+    path('get_record_details/', login_required(get_record_details), name='get_record_details'),   
 ]

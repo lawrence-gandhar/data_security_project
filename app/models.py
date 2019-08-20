@@ -127,7 +127,7 @@ class AppPermission(models.Model):
 #*********************************************************************
 
 class RecordsManagement(models.Model):
-    record_file = models.ForeignKey(FileSubmission, null = True, blank = True, on_delete = models.SET_NULL, db_index = True,)
+    record_file = models.ForeignKey(FileSubmission, null = True, blank = True, on_delete = models.CASCADE, db_index = True,)
     is_active = models.BooleanField(db_index = True, default = True)
     category = models.ForeignKey(Category, blank = True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_category') 
     sub_category = models.ForeignKey(Category, blank =True, null = True, db_index = True, on_delete = models.SET_NULL, related_name = 'record_sub_category')

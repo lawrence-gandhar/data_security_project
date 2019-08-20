@@ -15,7 +15,7 @@ from django.utils import timezone
 def insert_into_db(file_ins, file_path):
     path = settings.MEDIA_ROOT+file_path
 
-    wb_obj = openpyxl.load_workbook(path) 
+    wb_obj = openpyxl.load_workbook(path, data_only = True) 
     sheet_obj = wb_obj.active 
 
     total_rows = sheet_obj.max_row 
@@ -299,9 +299,9 @@ def GetRecord(user_id):
     
     record_fetch = records.filter(disposition = 0)
     record_fetch = record_fetch.select_related('category', 'sub_category','brand', 'record_file','previous_exhibition')
-    record_fetch = record_fetch.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
+    record_fetch = record_fetch.values('id', 'is_active' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
-                'remark_added_on', 'disposition', 'previous_exhibition__name').order_by('id')   
+                'remark_added_on', 'disposition', 'previous_exhibition__name', 'is_completed').order_by('id')   
 
 
     record_remarked_count = records.exclude(disposition = 0).count()

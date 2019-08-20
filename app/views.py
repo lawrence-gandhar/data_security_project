@@ -349,6 +349,20 @@ class RecordManagement(View):
     
     
 #=========================================================================================
+# DELETE FILE PERMANENTLY WITH RECORDS
+#=========================================================================================     
+
+def delete_file_data(request):
+    file_ins = request.GET["file_ins"]
+    
+    try:
+        FileSubmission.objects.get(pk = file_ins).delete()
+    except:
+        pass
+    finally:
+        return HttpResponse('1')
+ 
+#=========================================================================================
 # ACTIVATE RECORDS
 #=========================================================================================    
 def activate_records(request):
@@ -390,6 +404,7 @@ class StaffRecord(View):
 
     template_name = 'app/staff_section/index.html'
     context = {}
+    context["js_files"] = ['app_files/staff_records.js']
     
     def get(self, request, *args, **kwargs):
         
@@ -411,8 +426,11 @@ class StaffRecord(View):
         
         record.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/record-management/'))
+
     
-    
+#=========================================================================================
+# SET RECORD AS COMPLETED
+#=========================================================================================  
 def set_completed(request):
 
     status = False
@@ -428,3 +446,22 @@ def set_completed(request):
     except:
         pass
     return HttpResponse('')
+    
+
+#=========================================================================================
+# GET RECORD DETAILS
+#=========================================================================================     
+def get_record_details(request):
+
+    rec_id = request.GET['rec_id']
+    rec = RecordsManagement.objects.filter(pk = rec_id).values('contact_person', 'contact_number', 
+            'email', 'disposition', 'remarks')
+    
+    return JsonResponse({'rec':list(rec)})
+    
+    
+    
+    
+    
+    
+    

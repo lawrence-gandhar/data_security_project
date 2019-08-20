@@ -52,7 +52,7 @@ select.form-control{
 
 </style>
 
-<div class="main-panel" style="width:100%; overflow:scroll;">          
+<div class="main-panel" style="width:100%; overflow-x:auto;">          
     <div class="content-wrapper">
         {% if messages %}
             <div class="row alert alert-danger alert-dismissible" role="alert">
@@ -115,6 +115,7 @@ select.form-control{
                                         </select>
                                         <div class="input-group-append">
                                             <button class="btn btn-success btn-xs" type="submit" style="border-radius: 0px;" id="load_data_but">Load Data</button>
+											<button class="btn btn-danger btn-xs" type="button" onclick="delete_file_data()" style="border-radius: 0px; color:#000000" id="delete_data_but">Delete File</button>
 											<button style="font-size:14px" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#filters_modal" type="button" style="border-radius: 0px;">
 												<span class="mdi mdi-filter-outline"></span>
 											</button>

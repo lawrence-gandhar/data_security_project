@@ -10,18 +10,9 @@
 p{padding: 5px 0px; margin-bottom:0px;}
 </style>
 
-<div class="main-panel" style="width:100%; overflow:auto;">          
+<div class="main-panel" style="width:100%;">          
     <div class="content-wrapper">
         
-        {% if error_msg is not None %}
-            <div class="row alert alert-danger alert-dismissible" role="alert">
-                {{error_msg|safe}}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>			
-        {% endif %}
-
         <div class="page-header" style="margin: 0px -21px; margin-bottom:10px; ">
             <h3 class="page-title">Records Board</h3>
 		</div>
@@ -37,36 +28,36 @@ p{padding: 5px 0px; margin-bottom:0px;}
                                 <td style="padding:10px;">Industry</td>
                                 <td style="padding:10px;">Sub Industry</td>
                                 <td style="padding:10px;">Brand Name</td>
+								<td style="padding:10px;">Previous Exhibition</td>
                                 <td style="padding:10px;">Contact Person</td>
                                 <td style="padding:10px;">Contact No</td>
-                                <td style="padding:10px;">Email ID</td>
-                                <td style="padding:10px;">Remarks</td>
-								<td style="padding:10px;">Assigned On</td> 								
-                                <td style="padding:10px;">Remarked On</td>
-								<td style="padding:10px;">Disposition</td>
+                                <td style="padding:10px;">Email ID</td>                                
+								<td style="padding:10px;">Assigned On</td> 	
+								<td style="padding:10px;">Remarks</td>
+								<td style="padding:10px;">Detailed Remarks</td>
+                                <td style="padding:10px;">Remarked On</td>								
 								<td style="padding:10px;">Is Approved</td>
                                 <td style="padding:10px;">Action</td>
                             </thead>
                             <tbody>
 								{% for rec in records %}
 								
-								<tr>
+								<tr 
+									{% if not rec.is_active %} style="background:#ff9999" 
+									{% elif rec.is_completed %} style="background:#99ff99" 
+									{% endif %}
+								
+								>
 									<td class="text-center">{{rec.id}}</td>
 									<td class="text-center">{% tick_mark rec.is_active %}</td>
 									<td>{{ rec.category__category_name|title|safe }}</td>
 									<td>{{ rec.sub_category__category_name|title|safe }}</td>
 									<td>{{ rec.brand__brand_name|title|safe }}</td>
+									<td>{{ rec.previous_exhibition__name|title|safe }}</td>
 									<td>{{ rec.contact_person|title|safe }}</td>
 									<td>{{ rec.contact_number|safe }}</td>
 									<td>{{ rec.email|safe }}</td>
-									<td>
-										{% if  rec.remarks is not None %}
-										{{rec.remarks|safe}}
-										{% endif %}
-									</td>
-									<td>{{rec.record_file__uploaded_on|date:'D, d M Y'}}</td>
-									<td>{{rec.assigned_on|date:'D, d M Y'}}</td>
-									<td>{{rec.remark_added_on|date:'D, d M Y'}}</td>
+									<td>{{rec.assigned_on|date:'D, d M Y'}}</td>									
 									<td>
 										{% if rec.disposition == 1 %} Call Completed Successfully
 										{% elif rec.disposition == 2 %} Call Rejected
@@ -79,15 +70,25 @@ p{padding: 5px 0px; margin-bottom:0px;}
 										{% elif rec.disposition == 9 %} Details Are Incorrect
 										{% endif %}
 									</td>
+									<td>
+										{% if  rec.remarks is not None %}
+										{{rec.remarks|safe}}
+										{% endif %}
+									</td>
+									<td>{{rec.remark_added_on|date:'D, d M Y'}}</td>
+									<td class="text-center">{% tick_mark rec.is_completed %}</td>
 									<td class="text-center">
-										<a href="#" class="btn btn-xs btn-success" style="padding: 0.25rem 0.25rem; font-size:10px">
-											<i class="mdi mdi-lead-pencil"></i>
-										</a>
+										{% if rec.is_active and rec.is_completed is not True %}
+											<a href="#" class="btn btn-xs btn-success" style="padding: 0.25rem 0.25rem; font-size:10px" 
+											onclick="save_remarks({{rec.id}})">
+												<i class="mdi mdi-lead-pencil"></i>
+											</a>
+										{% endif %}
 									</td>
 								</tr>
 								{% empty %}
-									No More Records Found. Please wait records will be assigned to you shortly as the 
-									previously assigned records to you, are yet to be scrutinized and approved.
+									No Records Found. Please wait records will be assigned to you shortly. <br> 
+									If there were previously assigned records to you, they are yet to be scrutinized and approved.
 								{% endfor %}							
 							</tbody>
 						</table>
@@ -96,6 +97,62 @@ p{padding: 5px 0px; margin-bottom:0px;}
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+	<form action="" method="post">
+		<div class="modal-content">
+			<div class="modal-header" style="background-color: #8564d0; color: #FFFFFF;">
+				<h4 class="modal-title">Edit/Insert Remarks & Details</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-12">
+						<div class="form-group" style="margin-bottom:10px">
+							<label>Contact Person</label>
+							<input type="text" name="contact_person" id="id_contact_person" class="form-control">
+						</div>
+						<div class="form-group" style="margin-bottom:10px">
+							<label>Contact Number</label>
+							<input type="text" name="contact_number" id="id_contact_number" class="form-control">
+						</div>
+						<div class="form-group" style="margin-bottom:10px">
+							<label>Email</label>
+							<input type="text" name="email" id="id_email" class="form-control">
+						</div>
+						<div class="form-group" style="margin-bottom:15px">
+							<label>Remarks</label>
+							<select name="disposition" style="color:#000000;" class="form-control" id="id_disposition">
+								<option value="1">Call Completed Successfully</option>
+								<option value="2">Call Rejected</option>
+								<option value="3">Call Disconnected</option>
+								<option value="4">Wrong Number</option>
+								<option value="5">Answering Machine</option>
+								<option value="6">Call Later</option>
+								<option value="7">Do Not Call Again</option>
+								<option value="8">Not Answering</option>
+								<option value="9">Details Are Incorrect</option>
+							</select>
+						</div>
+						<div class="form-group" style="margin-bottom:0px">
+							<label>Detailed Remarks</label>
+							<textarea rows="10" name="remarks" id="id_remarks" class="form-control"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-xs btn-warning" data-dismiss="modal">Cancel</button>
+				<button type="submit" class="btn btn-xs btn-primary" data-dismiss="modal">Submit</button>
+			</div>
+		</div>
+	</form>
+  </div>
 </div>
 
 {% endblock %}
