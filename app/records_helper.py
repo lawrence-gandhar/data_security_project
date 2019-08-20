@@ -294,7 +294,7 @@ def PreviousAssignmentsExists(user_id, file_ins):
 # CHECK PREVIOUS ASSIGNMENTS OF RECORDS TO USER IN THE SAME FILE/SLOT 
 # ==========================================================================================
 #
-def GetRecord(user_id):
+def GetRecord(user_id = None, page = None, records_per_page = None, file_ins = None, kwargs = None):
     records = RecordsManagement.objects.filter(assigned_to = user_id, is_completed = False)
     
     #record_fetch = records.filter(disposition = 0)
@@ -303,11 +303,17 @@ def GetRecord(user_id):
                 'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
                 'remark_added_on', 'disposition', 'previous_exhibition__name', 'is_completed').order_by('id')   
 
+    per_page = 10
+    if records_per_page is not None:
+        per_page = records_per_page
 
-    record_remarked_count = records.exclude(disposition = 0).count()
-    pending_records = records.count()
+    if page is None:
+        page = 1
     
-    return record_fetch, record_remarked_count, pending_records
+    paginator = Paginator(record_fetch, per_page)
+    record_fetch = paginator.get_page(page)
+
+    return record_fetch
     
     
     

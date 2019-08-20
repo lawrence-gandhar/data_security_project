@@ -95,7 +95,14 @@ p{padding: 5px 0px; margin-bottom:0px;}
 					</div>
                 </div>
             </div>
-        </div>
+		</div>
+		<div class="row">
+			{% if records.paginator.count > 0 %}
+			<div class="col-md-12 pagination text-center">
+				{% paginate records request.META.QUERY_STRING %}             
+			</div>
+			{% endif %}
+		</div>
     </div>
 </div>
 

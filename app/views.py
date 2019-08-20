@@ -410,7 +410,7 @@ class StaffRecord(View):
         
         if not kwargs:
             
-            record_fetch, record_remarked_count, pending_records = records_helper.GetRecord(request.user)
+            record_fetch = records_helper.GetRecord(request.user)
         
             self.context["records"] = record_fetch
             
