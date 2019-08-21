@@ -221,10 +221,11 @@
 							</select>
 							</div>
 						</div>
-                        <div class="col-6">
+                        <div class="col-6" style="display:none">
 							<div class="form-group">
-                                <label for="id_dedicated_to_brand" style="margin-right:10px; margin-top:7px">Brand</label>
-                                <select style="color:#000000" class="form-control" name="dedicated_to_brand">
+                                <label for="id_dedicated_to_brand" style="margin-right:10px; margin-top:7px">Brand</label>                                
+								<select style="color:#000000" class="form-control" name="dedicated_to_brand">
+									<option value='' selected> Any </option>
 									{% for brand in brand_list %}
 										<option value="{{brand.id}}">{{brand}}</option>
 									{% endfor %}

@@ -78,43 +78,49 @@ def category_sub_brand_insertion(category, sub_category, brand, pe):
     #===========================================================================================
         
     if cat is not None:
-        sub_category = sub_category.strip()
+        if sub_category is not None:
+            try:
+                cat_insert = Category(
+                    category_name = sub_category.strip(),
+                    category_is_parent = False,
+                    category_parent_id = cat,
+                )
+                sub_cat = cat_insert.save()
+            except IntegrityError:
+                try:
+                    sub_cat = Category.objects.get(category_name = sub_category.strip(), category_is_parent = False)
+                except Category.DoesNotExist:
+                    sub_cat = None
+            
+            
+    #===========================================================================================
+    #   Brands Insertion
+    #===========================================================================================
 
+    if brand is not None:
         try:
-            cat_insert = Category(
-                category_name = sub_category.strip(),
-                category_is_parent = False,
-                category_parent_id = cat,
+            brand_insert = Brand(
+                brand_name = brand.strip(),
             )
-            sub_cat = cat_insert.save()
-        except IntegrityError:
-            sub_cat = Category.objects.get(category_name = sub_category.strip(), category_is_parent = False)
-    
-    #===========================================================================================
-    #   Brands Insertion
-    #===========================================================================================
 
-    try:
-        brand_insert = Brand(
-            brand_name = brand.strip(),
-        )
-
-        brand_ins = brand_insert.save()
-    except IntegrityError: 
-        brand_ins = Brand.objects.get(brand_name = brand.strip())
+            brand_ins = brand_insert.save()
+        except IntegrityError: 
+            brand_ins = Brand.objects.get(brand_name = brand.strip())
+            
 
     #===========================================================================================
     #   Brands Insertion
     #===========================================================================================
 
-    try:
-        pe_insert = PreviousExhibition(
-            name = pe.strip(),
-        )
+    if pe is not None:
+        try:
+            pe_insert = PreviousExhibition(
+                name = pe.strip(),
+            )
 
-        pe_ins = pe_insert.save()
-    except IntegrityError: 
-        pe_ins = PreviousExhibition.objects.get(name = pe.strip())
+            pe_ins = pe_insert.save()
+        except IntegrityError: 
+            pe_ins = PreviousExhibition.objects.get(name = pe.strip())
     
     return cat, sub_cat, brand_ins, pe_ins
 
@@ -248,8 +254,10 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
                 if user["app_permissions__dedicated_to_sub_category"] is not None:
                     records = records.filter(sub_category = user["app_permissions__dedicated_to_sub_category"])
                     
+                """    
                 if user["app_permissions__dedicated_to_brand"] is not None:
                     records = records.filter(brand = user["app_permissions__dedicated_to_brand"])
+                """
                 
                 if user["app_permissions__full_access"]:
                     records = records.values()
@@ -298,7 +306,6 @@ def PreviousAssignmentsExists(user_id, file_ins):
 def GetRecord(user_id = None, page = None, records_per_page = None,  kwargs = None):
     records = RecordsManagement.objects.filter(assigned_to = user_id, is_completed = False)
     
-    #record_fetch = records.filter(disposition = 0)
     record_fetch = records.select_related('category', 'sub_category','brand', 'record_file','previous_exhibition')
     record_fetch = record_fetch.values('id', 'is_active' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
