@@ -148,7 +148,7 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
     if file_ins is None:
         try:
             file_ins = FileSubmission.objects.exclude(is_active = False).latest('id')
-        except FileSubmission.DoesNotExist:
+        except:
             return False, False
     else:
         try:
@@ -157,6 +157,7 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
             return False, False
 
     records = RecordsManagement.objects.filter(record_file = file_ins)
+    
     
     if kwargs is not None:
     
@@ -294,7 +295,7 @@ def PreviousAssignmentsExists(user_id, file_ins):
 # CHECK PREVIOUS ASSIGNMENTS OF RECORDS TO USER IN THE SAME FILE/SLOT 
 # ==========================================================================================
 #
-def GetRecord(user_id = None, page = None, records_per_page = None, file_ins = None, kwargs = None):
+def GetRecord(user_id = None, page = None, records_per_page = None,  kwargs = None):
     records = RecordsManagement.objects.filter(assigned_to = user_id, is_completed = False)
     
     #record_fetch = records.filter(disposition = 0)
@@ -303,7 +304,7 @@ def GetRecord(user_id = None, page = None, records_per_page = None, file_ins = N
                 'contact_person', 'contact_number', 'email', 'record_file__record_file_name','assigned_on', 'remarks', 
                 'remark_added_on', 'disposition', 'previous_exhibition__name', 'is_completed').order_by('id')   
 
-    per_page = 10
+    per_page = 5
     if records_per_page is not None:
         per_page = records_per_page
 

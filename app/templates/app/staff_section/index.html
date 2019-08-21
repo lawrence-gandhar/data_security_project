@@ -6,7 +6,51 @@
 
 {% block content %}
 
+
 <style>
+.btn-default{color:#FFFFFF !important;}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 70px;
+    padding: 0;
+    margin: 0.125rem 0 0;
+    font-size: 11px;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fed713;
+    border-color: #fed713 1px solid;
+    background-clip: padding-box;
+    border: 1px solid #ebedf2;
+    border-radius: 0px; 
+}
+
+.dropdown-menu li:hover{     
+    background-color: #eac301;
+    border-color: #ddb901; 
+}
+
+select.form-control{
+    color:#000000;
+}
+
+.btn{border-radius:0px;}
+
+#hide_show_settings{display:none;}
+
+.form-inline label {
+    display: flex;
+    align-items: right;
+    justify-content: right;
+    margin-bottom: 0;
+}
+
 p{padding: 5px 0px; margin-bottom:0px;}
 </style>
 

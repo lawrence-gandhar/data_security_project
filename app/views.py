@@ -407,10 +407,13 @@ class StaffRecord(View):
     context["js_files"] = ['app_files/staff_records.js']
     
     def get(self, request, *args, **kwargs):
+    
+        page = request.GET.get('page',1)
+        records_per_page = request.GET.get('per_page',None)
         
         if not kwargs:
             
-            record_fetch = records_helper.GetRecord(request.user)
+            record_fetch = records_helper.GetRecord(request.user, page, records_per_page)
         
             self.context["records"] = record_fetch
             
