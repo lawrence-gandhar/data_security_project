@@ -1,5 +1,14 @@
 
-$(function(){});
+$(function(){
+	
+$('body').bind('copy', function(e){
+	e.preventDefault();
+	return false;
+})
+	
+	
+	
+});
 
 function save_remarks(id){
 	
