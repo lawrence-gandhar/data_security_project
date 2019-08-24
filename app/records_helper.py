@@ -62,9 +62,6 @@ def category_sub_brand_insertion(category, sub_category, brand, pe):
     brand_ins = None
     pe_ins = None
 
-    if category is None:
-        category = "Not Specified"
-
     try:
         cat_insert = Category(
             category_name = category.strip(),
