@@ -25,4 +25,6 @@ urlpatterns = [
     path('set_completed/', login_required(set_completed), name='set_completed'),
     path('delete_file_data/', login_required(delete_file_data), name='delete_file_data'),
     path('get_record_details/', login_required(get_record_details), name='get_record_details'),   
+    path('assign_selected_records/', login_required(assign_selected_records), name='assign_selected_records'),
+    path('approve_records/', login_required(approve_records), name='approve_records'),
 ]

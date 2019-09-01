@@ -146,7 +146,7 @@ def BrandList(cat = None, sub_cat = None):
     
 
 #===========================================================================================
-# Records List
+# RECORDS LIST
 # ==========================================================================================
 # 
 def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = None):
@@ -202,12 +202,16 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
 
 
 #===========================================================================================
-# Records FILES List
+# RECORDS FILES LIST
 # ==========================================================================================
 #
 def RecordsFileList():
     return FileSubmission.objects.all().values().order_by('-id')
 
+#===========================================================================================
+# Records Status
+# ==========================================================================================
+#
 def RecordsStatus(records = list(), opt = '0'):
     for rec in records:
         try:
@@ -323,10 +327,51 @@ def GetRecord(user_id = None, page = None, records_per_page = None,  kwargs = No
 
     return record_fetch
     
+
+#===========================================================================================
+# RECORDS STAFF ASSIGN
+# ==========================================================================================
+#
+def RecordsStaffAssign(records = list(), opt = '0', staff = '0'):
+    for rec in records:
+        try:
+            if staff != '0' and opt != '0':            
+                record = RecordsManagement.objects.get(pk = int(rec))
+                record.is_assigned = True
+                record.assigned_to_id = int(staff)
+                record.assigned_on = timezone.now()
+                record.save()
+        except:
+            pass
+
+
+#===========================================================================================
+# RECORDS STAFF ASSIGN
+# ==========================================================================================
+#
+def RecordsApproval(file_ins = None, records = list(), opt = '0', staff = '0'):    
+
+    if file_ins is not None:
     
-    
-    
-    
+        try:
+            file_ins = FileSubmission.objects.get(pk = file_ins)
+        except:
+            return False
+            
+        if staff == '0':
+            records = RecordsManagement.objects.filter(file_ins = file_ins, is_completed = False, is_assigned = True).values('id')
+        elif staff == '1':
+            records = RecordsManagement.objects.filter(pk__in = records, is_completed = False, is_assigned = True).values('id')
+        else:
+            if len(records) > 0:
+                records = RecordsManagement.objects.filter(record_file_name = file_ins, assigned_to_id = staff, is_completed = True, pk__in = records).values('id')
+            else:    
+                records = RecordsManagement.objects.filter(file_ins = file_ins, assigned_to_id = staff, is_completed = True).values('id')
+        
+        
+        for rec in records:
+            rec.is_completed = True
+            rec.save()
     
     
     

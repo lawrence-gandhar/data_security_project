@@ -129,19 +129,18 @@ select.form-control{
 											<button style="font-size:14px" class="btn btn-warning btn-xs  dropdown-toggle" data-toggle="dropdown" type="button" style="border-radius: 0px;">
 												<span class="mdi mdi-settings"></span>
 											</button>
-											<ul class="dropdown-menu" role="menu" id="sidebar-id">
-												<li class="hide_show_button" params="activate_section" style="padding:5px 10px; cursor:pointer;">
-													<span>Activate/Deactivate Records</span>
+											<ul class="dropdown-menu" role="menu">
+												<li style="padding:5px 10px; cursor:pointer;">
+													<span class="hide_show_button" params="activate_section">Activate/Deactivate Records</span>
 												</li>
-												<li class="hide_show_button" params="auto_assign_section" style="padding:5px 10px; cursor:pointer;">
-													<span>Auto Assign Records</span>
+												<li style="padding:5px 10px; cursor:pointer;">
+													<span class="hide_show_button" params="auto_assign_section">Auto Assign Records</span>
 												</li>
-												<li class="hide_show_button" params="assign_selected_section" style="padding:5px 10px; cursor:pointer;">
-													<span>Assign Selected Records</span>
+												<!--
+												<li style="padding:5px 10px; cursor:pointer;">
+													<span class="hide_show_button" params="assign_selected_section">Assign Selected Records</span>
 												</li>
-												<li class="hide_show_button" params="approve_records_section" style="padding:5px 10px; cursor:pointer;">
-													<span>Approve Records</span>
-												</li>
+												-->
 											</ul>
 										</div>
                                     </div>                                    
@@ -293,114 +292,93 @@ select.form-control{
     </div>
 </div>
 
-<div id="hide_show_settings" style="overflow:hidden; z-index:9; position:fixed; top:70px; right:0; height:100%; width:300px; background:#1e2048 ;">
+<div id="hide_show_settings" style="siaplay:hidden;overflow:hidden; z-index:9; position:fixed; top:70px; right:0; height:100%; width:300px; background:#1e2048 ;">
 	<div class="row" style="margin:0px 0px; background-color:#b66dff; padding:5px 10px; color:#FFFFFF">
 		<span class="mdi mdi-settings" style="line-height:28px;">&nbsp;Settings</span>
-		<button class="btn btn-primary btn-sm" onclick="call_hide()" style="right:5px; position:absolute; margin-top: -2px;">Hide</button>
+		<button class="btn btn-primary btn-sm hide_show_button" style="right:5px; position:absolute; margin-top: -2px;">Hide</button>
 	</div>
-	
-	<div class="row hide-us" id="activate_section" style="padding:5px 10px;">
+	<div class="row" style="padding:5px 10px;">
 		<div class="col-12">		
-			<div class="form-group">
-				<label for="activate_records" style="color:#FFFFFF;padding:10px 0px">
-					Activate Selected Records
-				</label>
-				<select class="form-control input-xs" name="activate_records" id="activate_records">
-					<option value="0">No</option>
-					<option value="1">Yes</option>
-				</select>
-			</div>
-			<div class="form-group text-center">
-				<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
-			</div>
-		</div>
-	</div>
-	
-	<div class="row hide-us" id="auto_assign_section" style="padding:5px 10px;">		
-		<div class="col-md-12">
+			<table class="table activate_section">
+				<tr style="border:0px;" >
+					<td style="color:#FFFFFF; border:0px">Activate Selected Records</td>
+					<td style=" border:0px">								
+						<select class="form-control input-xs" name="activate_records" id="activate_records">
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+					</td>
+				</tr>
+				<tr style="border:0px;">
+					<td style="color:#FFFFFF; border:0px; padding-top:25px" colspan="2" class="text-center">
+						<button onclick="act_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
+					</td>
+				</tr>
+			</table>
 			<form action="{% url 'auto_assign' %}" method="post">
 				{% csrf_token %}				
 				<input type="hidden" value="{{file_ins}}" name="file_ins">
-				<div class="form-group">
-					<label for="auto_assign" style="color:#FFFFFF;padding:10px 0px">
-						Auto Assign Records to all staff
-					</label>
-					<select class="form-control input-xs" name="auto_assign" id="auto_assign">
-						<option value="0">No</option>
-						<option value="1">Yes</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="auto_assign" style="color:#FFFFFF;padding:10px 0px">
-						Select Staff
-					</label>
-					<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple='multiple' required>
-						<option value="0" selected>ALL STAFF</option>
-						{% for staff in user_list %}
-							<option style="padding:3px 0px;" value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
-						{% endfor %}
-					</select>
-				</div>	
-				<div class="form-group text-center">
-					<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
-				</div>
+				<table class="table auto_assign_section">
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:15px">Auto Assign Records to all staff</td>
+						<td style="color:#FFFFFF; border:0px; padding-top:15px">								
+							<select class="form-control input-xs" id="auto_assign">
+								<option value="0">No</option>
+								<option value="1">Yes</option>
+							</select>
+						</td>
+					</tr>
+					<tr style="border:0px;display:none;" class="auto_assign_section">
+						<td style="color:#FFFFFF; border:0px;">Select Staff</td>
+						<td  style="border:0px;">
+							<select id="auto_assign_staff" name="auto_assign_staff" class="form-control" multiple='multiple' required>
+								<option value="0" selected>ALL STAFF</option>
+								{% for staff in user_list %}
+									<option value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
+								{% endfor %}
+							</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:25px" colspan="2" class="text-center">
+							<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
+						</td>
+					</tr>
+				</table>
 			</form>
-		</div>	
-	</div>
-	
-	<div class="row hide-us" id="assign_selected_section" style="padding:5px 10px;">		
-		<div class="col-md-12">			
-			<div class="form-group">					
-				<label for="assign_selected" style="color:#FFFFFF;padding:10px 0px">
-					Assign Selected Records To Staff
-				</label>
-				<select class="form-control input-xs" id="assign_selected_opt">
-					<option value="0">No</option>
-					<option value="1">Yes</option>
-				</select>
-			</div>
-			
-			<div class="form-group">	
-				<select id="assign_selected_staff" name="auto_assign_staff" class="form-control">
-					<option value=""></option>
-					{% for staff in user_list %}
-						<option value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
-					{% endfor %}
-				</select>
-			</div>				
-			<div class="form-group text-center">
-				<button onclick="assign_selected_records()" type="button" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
-			</div>
+			<form action="{% url 'auto_assign' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" value="{{file_ins}}" name="file_ins">
+				<table class="table assign_selected_section">
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:15px">Assign Selected Records To Staff</td>
+						<td style="padding-top:15px; border:0px;">
+						<select class="form-control input-xs">
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px;">Staff Name</td>
+						<td style=" border:0px">
+						<select id="assign_staff" name="auto_assign_staff" class="form-control" required>
+							<option value=""></option>
+							{% for staff in user_list %}
+								<option value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
+							{% endfor %}
+						</select>
+						</td>
+					</tr>
+					<tr style="border:0px;">
+						<td style="color:#FFFFFF; border:0px; padding-top:25px" colspan="2" class="text-center">
+							<button type="submit" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 	</div>
-	
-	<div class="row hide-us" id="approve_records_section" style="padding:5px 10px;">				
-		<div class="col-md-12">
-			<div class="form-group">					
-				<label for="approve_records_opt" style="color:#FFFFFF;padding:10px 0px">
-					Approve All Or Selected Records
-				</label>
-				<select class="form-control input-xs" id="approve_records_opt">
-					<option value="0">No</option>
-					<option value="1">Yes</option>
-				</select>
-			</div>			
-			<div class="form-group">	
-				<select id="approve_records" name="approve_records" class="form-control" required>
-					<option value="0">All Records</option>
-					<option value="1">selected Only</option>
-					{% for staff in user_list %}
-						<option value="{{staff.id}}">{{staff.first_name|safe}} {{staff.last_name|safe}}</option>
-					{% endfor %}
-				</select>
-			</div>				
-			<div class="form-group text-center">
-				<button type="button" onclick="approve_records_section()" class="btn btn-success btn-xs" style="margin-right:0px;">Execute</button>
-			</div>
-		</div>
-	</div>	
-	
-	
 </div>
 
 <!-- ADD USER MODAL -->

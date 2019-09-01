@@ -381,7 +381,7 @@ def activate_records(request):
 def auto_assign(request):
     opt = request.POST.get('opt',False)
     file_ins = request.POST.get('file_ins',None)
-    auto_assign_staff = request.POST.getlist('auto_assign_staff', list())
+    auto_assign_staff = request.get.getlist('auto_assign_staff', list())
     
     if opt == '0':
         opt = False
@@ -464,10 +464,37 @@ def get_record_details(request):
             'email', 'disposition', 'remarks')
     
     return JsonResponse({'rec':list(rec)})
+  
+  
+#=========================================================================================     
+# ASSIGN SELECTED RECORDS
+#=========================================================================================     
+def assign_selected_records(request):
+    records = request.POST.getlist('case[]')  
+    opt = request.POST['opt']
+    staff = request.POST['staff']
     
+    if len(records) > 0:
+        records_helper.RecordsStaffAssign(records, opt, staff)
+    
+    return HttpResponse('')
+    
+
 #=========================================================================================     
-# 
+# APPROVE RECORDS 
 #=========================================================================================     
+def approve_records(request):  
+    records = request.POST.getlist('case[]')  
+    opt = request.POST['opt']
+    staff = request.POST['staff']
+    file_ins = request.POST['file_ins']
+    
+    records_helper.RecordsApproval(file_ins, records, opt, staff)
+       
+    return HttpResponse('')
+    
+    
+    
     
     
     
