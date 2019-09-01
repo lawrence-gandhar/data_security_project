@@ -359,19 +359,19 @@ def RecordsApproval(file_ins = None, records = list(), opt = '0', staff = '0'):
             return False
             
         if staff == '0':
-            records = RecordsManagement.objects.filter(file_ins = file_ins, is_completed = False, is_assigned = True).values('id')
+            records = RecordsManagement.objects.filter(record_file = file_ins, is_completed = False, is_assigned = True, disposition__gt = 0).values('id')
         elif staff == '1':
-            records = RecordsManagement.objects.filter(pk__in = records, is_completed = False, is_assigned = True).values('id')
+            records = RecordsManagement.objects.filter(pk__in = records, is_completed = False, is_assigned = True, disposition__gt = 0 ).values('id')
         else:
             if len(records) > 0:
-                records = RecordsManagement.objects.filter(record_file_name = file_ins, assigned_to_id = staff, is_completed = True, pk__in = records).values('id')
+                records = RecordsManagement.objects.filter(record_file = file_ins, assigned_to_id = staff, is_completed = False, pk__in = records, disposition__gt =0 ).values('id')
             else:    
-                records = RecordsManagement.objects.filter(file_ins = file_ins, assigned_to_id = staff, is_completed = True).values('id')
-        
+                records = RecordsManagement.objects.filter(record_file = file_ins, assigned_to_id = staff, is_completed = False, disposition__gt = 0).values('id')
         
         for rec in records:
-            rec.is_completed = True
-            rec.save()
+            obj = RecordsManagement.objects.get(pk = rec["id"])
+            obj.is_completed = True
+            obj.save()
     
     
     
