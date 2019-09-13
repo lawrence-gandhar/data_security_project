@@ -188,16 +188,13 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
         if kwargs["brand"]!='':
             records = records.filter(brand_id = kwargs["brand"])
     
-    """
+    
     records = records.select_related('category', 'sub_category', 'brand', 'record_file', 'previous_exhibition')
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
                 'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
                 'assigned_on', 'is_completed','disposition', 'previous_exhibition__name').order_by('id')
-    """
-    records = records.values('id','contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
-                'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
-                'assigned_on', 'is_completed','disposition',).order_by('id')
+    
 
     per_page = 10
     if records_per_page is not None:
@@ -246,8 +243,7 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
             app_perm = User.objects.filter(pk__in = staff_list)
             
         app_perm = app_perm.select_related('app_permissions')        
-        app_perm = app_perm.values('id', 'app_permissions__full_access', 'app_permissions__record_access_size', 'app_permissions__dedicated_to_category',
-                        'app_permissions__dedicated_to_sub_category', 'app_permissions__dedicated_to_brand')
+        
                         
         try:
             file_ins = FileSubmission.objects.get(pk = int(file_ins))        
@@ -255,38 +251,42 @@ def AutoAssignRecords(file_ins = 0, opt = False, staff_list = [0]):
             file_ins = None
             return False
         
+        
         for user in app_perm:
-            
-            ret, buff_size = PreviousAssignmentsExists(user["id"], file_ins)
+                    
+            ret, buff_size = PreviousAssignmentsExists(user.id, file_ins)
             
             if not ret:
                 
                 records = RecordsManagement.objects.filter(is_active = True, record_file = file_ins, is_assigned = False,)
-                
-                if user["app_permissions__dedicated_to_category"] is not None:
-                    records = records.filter(category = user["app_permissions__dedicated_to_category"])
-                
-                if user["app_permissions__dedicated_to_sub_category"] is not None:
-                    records = records.filter(sub_category = user["app_permissions__dedicated_to_sub_category"])
+                 
+                if len(user.app_permissions.dedicated_to_category.all()) > 0:
+                    records = records.filter(category__in = user.app_permissions.dedicated_to_category.all())
                     
-                """    
-                if user["app_permissions__dedicated_to_brand"] is not None:
-                    records = records.filter(brand = user["app_permissions__dedicated_to_brand"])
-                """
                 
-                if user["app_permissions__full_access"]:
+                if len(user.app_permissions.dedicated_to_sub_category.all()) > 0:
+                    records = records.filter(sub_category__in = user.app_permissions.dedicated_to_sub_category.all())
+                    
+                if len(user.app_permissions.dedicated_to_brand.all()) > 0:
+                    records = records.filter(brand__in = user.app_permissions.dedicated_to_brand.all())
+                    
+                if len(user.app_permissions.dedicated_to_pe.all()) > 0:
+                    records = records.filter(previous_exhibition__in = user.app_permissions.dedicated_to_pe.all())
+                                        
+                if user.app_permissions.full_access:
                     records = records.values()
                 else:
                     records = records.values()[:buff_size]
-                             
+                    
+                print(records.query)    
                 
                 for record in records:
                     try:
                         rec = RecordsManagement.objects.get(pk = record["id"])
-                        rec.assigned_to_id = user["id"]
+                        rec.assigned_to_id = user.id
                         rec.assigned_on = timezone.now()
                         rec.is_assigned = opt
-                        rec.save()         
+                        rec.save()  
                     except:
                         pass
 

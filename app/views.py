@@ -408,7 +408,7 @@ def activate_records(request):
 def auto_assign(request):
     opt = request.POST.get('opt',False)
     file_ins = request.POST.get('file_ins',None)
-    auto_assign_staff = request.get.getlist('auto_assign_staff', list())
+    auto_assign_staff = request.POST.getlist('auto_assign_staff', list())
     
     if opt == '0':
         opt = False

@@ -134,7 +134,7 @@ function approve_records_section(){
 	form_elem += "&file_ins="+file_ins;
 	
 	$.post("/approve_records/",form_elem,function(data){
-		//location.reload();
+		location.reload();
 	});
 }
 	
