@@ -26,8 +26,6 @@ def create_user_profile(sender, instance, created, **kwargs):
         UserProfile.objects.create(user=instance)
 
  
-
-
 @receiver(post_save, sender=User)
 def create_app_permission(sender, instance, created, **kwargs):
     if created:
@@ -111,9 +109,14 @@ class AppPermission(models.Model):
     record_access_size = models.BigIntegerField(db_index = True, default = 0,)
     full_access = models.BooleanField(db_index = True, default = False,)
     read_only_mode = models.BooleanField(db_index = True, default = True,)
-    dedicated_to_category = models.ForeignKey(Category, blank = True, null = True, on_delete = models.SET_NULL, related_name = 'app_permissions_category')
-    dedicated_to_sub_category = models.ForeignKey(Category, blank = True, null = True, on_delete = models.SET_NULL,related_name = 'app_permissions_sub')
-    dedicated_to_brand = models.ForeignKey(Brand, blank = True, null = True, on_delete = models.SET_NULL, related_name = 'app_permissions_brand')
+    #dedicated_to_category = models.ForeignKey(Category, blank = True, null = True, on_delete = models.SET_NULL, related_name = 'app_permissions_category')
+    #dedicated_to_sub_category = models.ForeignKey(Category, blank = True, null = True, on_delete = models.SET_NULL,related_name = 'app_permissions_sub')
+    #dedicated_to_brand = models.ForeignKey(Brand, blank = True, null = True, on_delete = models.SET_NULL, related_name = 'app_permissions_brand')
+    dedicated_to_category = models.ManyToManyField(Category, related_name = 'app_permissions_category')
+    dedicated_to_sub_category = models.ManyToManyField(Category, related_name = 'app_permissions_sub')
+    dedicated_to_brand = models.ManyToManyField(Brand, related_name = 'app_permissions_brand')
+    dedicated_to_pe = models.ManyToManyField(PreviousExhibition, related_name = 'app_permissions_pe')
+
 
     def __str__(self):
         return "{0} {1}".format((self.user.first_name).upper(), (self.user.last_name).upper())

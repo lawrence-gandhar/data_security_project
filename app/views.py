@@ -88,6 +88,7 @@ class StaffManagement(View):
             'category_list' : records_helper.CategoryList(),
             'sub_category_list' : records_helper.SubCategoryList(),
             'brand_list' : records_helper.BrandList(),
+            'pe_list' : records_helper.PEList(),
             'error_msg': None, 
             'js_files' : self.js_files,
         })
@@ -103,33 +104,42 @@ class StaffManagement(View):
             user.save()
             
             app_perm = AppPermission.objects.get(user = user)
+            app_perm.save()
             
-            if request.POST["dedicated_to_category"] != "":
-                category = Category.objects.get(pk = request.POST["dedicated_to_category"])                
-                app_perm.dedicated_to_category = category
-                app_perm.save()
-            else:
-                app_perm.dedicated_to_category = None
-                app_perm.save()
-                
-            if request.POST["dedicated_to_sub_category"] != "":
-                sub_category = Category.objects.get(pk = request.POST["dedicated_to_sub_category"])
-                app_perm.dedicated_to_sub_category = sub_category
-                app_perm.save()
-            else:
-                app_perm.dedicated_to_sub_category = None
-                app_perm.save()
             
-            if request.POST["dedicated_to_brand"] != "":
-                brand = Brand.objects.get(pk = request.POST["dedicated_to_brand"])
-                app_perm.dedicated_to_brand = brand
-                app_perm.save()
-            else:
-                app_perm.dedicated_to_brand = None
-                app_perm.save()
+            dec = request.POST.getlist("dedicated_to_category")
+            dec_s = request.POST.getlist("dedicated_to_sub_category")
+            br = request.POST.getlist("dedicated_to_brand")
+            pe = request.POST.getlist("dedicated_to_pe")
+            
+            if len(dec) > 0:
+                category = Category.objects.filter(pk__in = dec)   
+                for rec in category:
+                    app_perm.dedicated_to_category.add(rec)
                 
+                    
+            if len(dec_s) > 0:
+                s_category = Category.objects.filter(pk__in = dec_s)   
+                for rec in s_category:
+                    app_perm.dedicated_to_sub_category.add(rec)
+                
+                
+            if len(br) > 0:
+                brand = Brand.objects.filter(pk__in = br)   
+                for rec in brand:
+                    app_perm.dedicated_to_brand.add(rec)
+                
+                    
+            if len(pe) > 0:
+                pe = PreviousExhibition.objects.filter(pk__in = pe)   
+                for rec in pe:
+                    app_perm.dedicated_to_pe.add(rec)
+                    
+            
+                         
             return redirect('/staff-management/', 'refresh')
-
+             
+           
         return render(request, self.template_name, {
             "users": user_helper.UserList(), 
             'staff_form': StaffForm(),
@@ -142,10 +152,12 @@ class StaffManagement(View):
 #=========================================================================================
 
 def get_sub_category(request):
-    if request.GET["cat_id"] != "":
-        sub_cats = records_helper.SubCategoryList(request.GET["cat_id"])
+    sub_cat_list = request.GET.getlist("cat_id[]")
+    
+    if len(sub_cat_list) > 0:
+        sub_cats = records_helper.SubCategoryList(sub_cat_list)
         
-        html = ['<option value="''">Any</option>']
+        html = []
         for sub in sub_cats:
             html.append('<option value="'+str(sub.id)+'">'+str(sub)+'</option>');
         return HttpResponse(''.join(html))
@@ -191,6 +203,7 @@ class EditStaff(View):
             'category_list' : records_helper.CategoryList(),
             'sub_category_list' : records_helper.SubCategoryList(),
             'brand_list' : records_helper.BrandList(),
+            'pe_list' : records_helper.PEList(),
             'js_files' : self.js_files,
         })
 
@@ -214,30 +227,43 @@ class EditStaff(View):
             staff.save()
             
             app_perm = AppPermission.objects.get(user = user)
+            app_perm.save()
             
-            if request.POST["dedicated_to_category"] != "":
-                category = Category.objects.get(pk = request.POST["dedicated_to_category"])                
-                app_perm.dedicated_to_category = category
-                app_perm.save()
-            else:
-                app_perm.dedicated_to_category = None
-                app_perm.save()
+            app_perm.dedicated_to_category.clear()
+            app_perm.dedicated_to_sub_category.clear()
+            app_perm.dedicated_to_brand.clear()  
+            app_perm.dedicated_to_pe.clear()      
+            
+            
+            dec = request.POST.getlist("dedicated_to_category")
+            dec_s = request.POST.getlist("dedicated_to_sub_category")
+            br = request.POST.getlist("dedicated_to_brand")
+            pe = request.POST.getlist("dedicated_to_pe")
+            
+            if len(dec) > 0:
+                category = Category.objects.filter(pk__in = dec)                   
+                for rec in category:
+                    app_perm.dedicated_to_category.add(rec)
                 
-            if request.POST["dedicated_to_sub_category"] != "":
-                sub_category = Category.objects.get(pk = request.POST["dedicated_to_sub_category"])
-                app_perm.dedicated_to_sub_category = sub_category
-                app_perm.save()
-            else:
-                app_perm.dedicated_to_sub_category = None
-                app_perm.save()
-            
-            if request.POST["dedicated_to_brand"] != "":
-                brand = Brand.objects.get(pk = request.POST["dedicated_to_brand"])
-                app_perm.dedicated_to_brand = brand
-                app_perm.save()
-            else:
-                app_perm.dedicated_to_brand = None
-                app_perm.save()
+                    
+            if len(dec_s) > 0:
+                s_category = Category.objects.filter(pk__in = dec_s)                  
+                for rec in s_category:
+                    app_perm.dedicated_to_sub_category.add(rec)
+                
+                
+            if len(br) > 0:
+                brand = Brand.objects.filter(pk__in = br)                                
+                for rec in brand:
+                    app_perm.dedicated_to_brand.add(rec)
+                
+                    
+            if len(pe) > 0:
+                pe = PreviousExhibition.objects.filter(pk__in = pe)  
+                app_perm.dedicated_to_pe.clear()  
+                for rec in pe:
+                    app_perm.dedicated_to_pe.add(rec)
+             
                         
             return redirect('/staff-management/', parmanent = True)
         else:
@@ -250,6 +276,7 @@ class EditStaff(View):
                 'category_list' : records_helper.CategoryList(),
                 'sub_category_list' : records_helper.SubCategoryList(),
                 'brand_list' : records_helper.BrandList(),
+                'pe_list' : records_helper.PEList(),
                 'js_files' : self.js_files,
             })
 

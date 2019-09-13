@@ -4,14 +4,8 @@ from app.models import UserProfile, AppPermission
 from django.core.paginator import Paginator
 
 def UserList(page = None, records_per_page = None):
-    users = User.objects.all().select_related('profile', 'app_permissions')
-    users = users.values('id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser', 'is_active', 
-            'app_permissions__record_access_size', 'app_permissions__full_access', 'app_permissions__read_only_mode',
-            'profile__profile_pic', 'profile__phone', 'app_permissions__dedicated_to_category', 
-            'app_permissions__dedicated_to_sub_category', 'app_permissions__dedicated_to_brand',
-            'profile__profile_pic', 'profile__phone',
-        ).order_by('id')
-
+    users = User.objects.all().select_related('profile', 'app_permissions').order_by('id')
+    
     per_page = 25
     if records_per_page is not None:
         per_page = records_per_page

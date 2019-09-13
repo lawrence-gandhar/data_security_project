@@ -136,14 +136,20 @@ def CategoryList():
     
 def SubCategoryList(cate = None):
     sub_cat = Category.objects.filter(is_active = True, category_is_parent = False,)
-    if cate is not None:
-        sub_cat = sub_cat.filter(category_parent_id = cate)
+    if cate is not None and len(cate)>0:
+        sub_cat = sub_cat.filter(category_parent_id__in = cate)
     return sub_cat    
     
     
 def BrandList(cat = None, sub_cat = None):    
     return Brand.objects.filter(is_active = True,).order_by('brand_name')
     
+
+def PEList():
+    return PreviousExhibition.objects.filter(is_active = True,).order_by('name')
+
+
+
 
 #===========================================================================================
 # RECORDS LIST
@@ -182,11 +188,16 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
         if kwargs["brand"]!='':
             records = records.filter(brand_id = kwargs["brand"])
     
+    """
     records = records.select_related('category', 'sub_category', 'brand', 'record_file', 'previous_exhibition')
     records = records.values('id' ,'category__category_name', 'sub_category__category_name', 'brand__brand_name', 
                 'contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
                 'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
                 'assigned_on', 'is_completed','disposition', 'previous_exhibition__name').order_by('id')
+    """
+    records = records.values('id','contact_person', 'contact_number', 'email', 'is_active', 'record_file__uploaded_on', 'remarks', 'remark_added_on',
+                'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
+                'assigned_on', 'is_completed','disposition',).order_by('id')
 
     per_page = 10
     if records_per_page is not None:
