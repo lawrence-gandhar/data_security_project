@@ -44,6 +44,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 # Helpers
 import app.user_helper as user_helper
 import app.records_helper as records_helper
+import app.combiners_helper as combiners_helper
 
 # Forms
 from app.forms import *
@@ -56,7 +57,7 @@ from app.forms import *
 class RecordManagement(View):
     template_name = 'app/record_management/index.html'
     msg = ''
-    js_files = ['app_files/records_management.js']
+    js_files = ['app_files/records_management.js', 'app_files/searchBox.js']
 
     def get(self, request, *args, **kwargs):   
 
@@ -73,8 +74,10 @@ class RecordManagement(View):
         cate = request.GET.get('cate', None)
         sub_cat = request.GET.get('sub_cat', None)
         brand = request.GET.get('brand', None)
-        
-        if(active is None and assigned is None and cate is None and sub_cat is None and brand is None):
+        pe = request.GET.get('pe', None)    
+        search = request.GET.get('search', None)
+
+        if(active is None and assigned is None and cate is None and sub_cat is None and brand is None and search is None):
             kwargs = None
         else:
             kwargs = {
@@ -83,6 +86,8 @@ class RecordManagement(View):
                 "cate" : cate,
                 "sub_cat" : sub_cat,
                 "brand" : brand,
+                "pe" : pe,
+                "search" : search,
             }
         
         file_ins, records = records_helper.RecordsList(page, records_per_page, load_file, kwargs)
@@ -96,9 +101,9 @@ class RecordManagement(View):
             "records_file_list" : records_file_list,
             "js_files" : self.js_files,
             "user_list" : user_helper.StaffList(),
-            'category_list' : records_helper.CategoryList(),
-            'sub_category_list' : records_helper.SubCategoryList(),
-            'brand_list' : records_helper.BrandList(),
+            'category_list' : combiners_helper.CategoryList(),
+            'sub_category_list' : combiners_helper.SubCategoryList(),
+            'brand_list' : combiners_helper.BrandList(),
             'error_msg': None, 
         }
 

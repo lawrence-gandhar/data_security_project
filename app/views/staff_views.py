@@ -44,6 +44,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnIn
 # Helpers
 import app.user_helper as user_helper
 import app.records_helper as records_helper
+import app.combiners_helper as combiners_helper
 
 # Forms
 from app.forms import *
@@ -64,20 +65,26 @@ def forgot_password(request):
 
 class StaffManagement(View):
     template_name = 'app/staff_management/index.html'
-    js_files = ['app_files/staff_management.js']
+    js_files = ['app_files/staff_management.js', 'app_files/searchBox.js']
 
     def get(self, request):
 
         page = request.GET.get('page',1)
         records_per_page = request.GET.get('per_page',None)
-        
+        search = request.GET.get('search',None)
+
+        if search is not None:
+            users =  user_helper.UserList(page, records_per_page, search)
+        else:
+            users =  user_helper.UserList(page, records_per_page)
+
         return render(request, self.template_name, {
-            "users": user_helper.UserList(page,records_per_page), 
+            "users": users, 
             'staff_form': StaffForm(),
-            'category_list' : records_helper.CategoryList(),
-            'sub_category_list' : records_helper.SubCategoryList(),
-            'brand_list' : records_helper.BrandList(),
-            'pe_list' : records_helper.PEList(),
+            'category_list' : combiners_helper.CategoryList(),
+            'sub_category_list' : combiners_helper.SubCategoryList(),
+            'brand_list' : combiners_helper.BrandList(),
+            'pe_list' : combiners_helper.PEList(),
             'error_msg': None, 
             'js_files' : self.js_files,
         })
@@ -95,7 +102,7 @@ class StaffManagement(View):
             app_perm = AppPermission.objects.get(user = user)
             app_perm.save()
             
-            
+
             dec = request.POST.getlist("dedicated_to_category")
             dec_s = request.POST.getlist("dedicated_to_sub_category")
             br = request.POST.getlist("dedicated_to_brand")
@@ -105,19 +112,16 @@ class StaffManagement(View):
                 category = Category.objects.filter(pk__in = dec)   
                 for rec in category:
                     app_perm.dedicated_to_category.add(rec)
-                
-                    
+                     
             if len(dec_s) > 0:
                 s_category = Category.objects.filter(pk__in = dec_s)   
                 for rec in s_category:
                     app_perm.dedicated_to_sub_category.add(rec)
                 
-                
             if len(br) > 0:
                 brand = Brand.objects.filter(pk__in = br)   
                 for rec in brand:
                     app_perm.dedicated_to_brand.add(rec)
-                
                     
             if len(pe) > 0:
                 pe = PreviousExhibition.objects.filter(pk__in = pe)   
@@ -141,7 +145,7 @@ def get_sub_category(request):
     sub_cat_list = request.GET.getlist("cat_id[]")
     
     if len(sub_cat_list) > 0:
-        sub_cats = records_helper.SubCategoryList(sub_cat_list)
+        sub_cats = combiners_helper.SubCategoryList(sub_cat_list)
         
         html = []
         for sub in sub_cats:
@@ -186,10 +190,10 @@ class EditStaff(View):
             'app_permission':app_permission,
             'error_msg': None, 
             'staff':staff,
-            'category_list' : records_helper.CategoryList(),
-            'sub_category_list' : records_helper.SubCategoryList(),
-            'brand_list' : records_helper.BrandList(),
-            'pe_list' : records_helper.PEList(),
+            'category_list' : combiners_helper.CategoryList(),
+            'sub_category_list' : combiners_helper.SubCategoryList(),
+            'brand_list' : combiners_helper.BrandList(),
+            'pe_list' : combiners_helper.PEList(),
             'js_files' : self.js_files,
         })
 
@@ -259,10 +263,10 @@ class EditStaff(View):
                 'app_permission':app_permission,
                 'error_msg': None, 
                 'staff':user,
-                'category_list' : records_helper.CategoryList(),
-                'sub_category_list' : records_helper.SubCategoryList(),
-                'brand_list' : records_helper.BrandList(),
-                'pe_list' : records_helper.PEList(),
+                'category_list' : combiners_helper.CategoryList(),
+                'sub_category_list' : combiners_helper.SubCategoryList(),
+                'brand_list' : combiners_helper.BrandList(),
+                'pe_list' : combiners_helper.PEList(),
                 'js_files' : self.js_files,
             })
 

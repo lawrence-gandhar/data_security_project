@@ -77,9 +77,9 @@ select.form-control{
             <h3 class="page-title">Records Management</h3>
             <div class="col-md-6" style="padding:0px">
                 <div class="input-group">
-                    <input style="border-radius: 0px;" type="text" class="form-control" placeholder="Record" aria-label="Username" aria-describedby="basic-addon2">
+                    <input style="border-radius: 0px;" id="searchBox" type="text" class="form-control" placeholder="Record" aria-label="Username" aria-describedby="basic-addon2">
                     <div class="input-group-append">
-                        <button class="btn btn-success btn-xs" type="button" style="width: 70px;">Search</button>
+                        <button class="btn btn-success btn-xs" type="button" style="width: 70px;" onclick="searchBox('/record-management/?search=')">Search</button>
                         <button class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-target="#FileSubmission" style="width: 70px;">Upload</button>
                     
                         <button  style="border-radius: 0px; width: 70px;" type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown">

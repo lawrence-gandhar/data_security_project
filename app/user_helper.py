@@ -3,9 +3,22 @@ from django.contrib.auth.models import User
 from app.models import UserProfile, AppPermission
 from django.core.paginator import Paginator
 
-def UserList(page = None, records_per_page = None):
-    users = User.objects.all().select_related('profile', 'app_permissions').order_by('id')
-    
+from django.db.models import Q, Count, Sum, Prefetch
+
+
+def UserList(page = None, records_per_page = None, search = None):
+    users = User.objects
+
+    if search is not None:
+        users = users.filter(Q(username__icontains = search) | 
+            Q(first_name__icontains = search) | 
+            Q(last_name__icontains = search) |
+            Q(email__icontains = search))
+    else:
+        users = users.all()
+
+    users = users.select_related('profile', 'app_permissions').order_by('id')
+
     per_page = 25
     if records_per_page is not None:
         per_page = records_per_page

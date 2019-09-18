@@ -6,6 +6,9 @@ import openpyxl, os, sys, re
 from django.conf import settings
 from django.db import IntegrityError
 from django.utils import timezone
+import app.combiners_helper as combiners_helper
+
+from django.db.models import Q, Count, Sum, Prefetch
 
 #===========================================================================================
 # Excel to DB insertion 
@@ -31,7 +34,7 @@ def insert_into_db(file_ins, file_path):
         brand = sheet_obj.cell(row = row, column = 3).value
         pe = sheet_obj.cell(row = row, column = 7).value
 
-        cat, sub_cat, brand_ins, pe_ins = category_sub_brand_insertion(category, sub_category, brand, pe)
+        cat, sub_cat, brand_ins, pe_ins = combiners_helper.category_sub_brand_insertion(category, sub_category, brand, pe)
        
         record = RecordsManagement(
             record_file = file_ins,
@@ -48,108 +51,6 @@ def insert_into_db(file_ins, file_path):
         record.save()
         
     return msg
-
-
-#===========================================================================================
-# Category & Sub Category, Brand Insertion   
-# ==========================================================================================
-# 
-
-def category_sub_brand_insertion(category, sub_category, brand, pe):
-    
-    cat = None
-    sub_cat = None
-    brand_ins = None
-    pe_ins = None
-
-    try:
-        cat_insert = Category(
-            category_name = category.strip(),
-            category_is_parent = True,
-        )
-
-        cat = cat_insert.save()
-    
-    except IntegrityError:
-        cat = Category.objects.get(category_name = category.strip())
-
-    #===========================================================================================
-    # Sub category   
-    #===========================================================================================
-        
-    if cat is not None:
-        if sub_category is not None:
-            try:
-                cat_insert = Category(
-                    category_name = sub_category.strip(),
-                    category_is_parent = False,
-                    category_parent_id = cat,
-                )
-                sub_cat = cat_insert.save()
-            except IntegrityError:
-                try:
-                    sub_cat = Category.objects.get(category_name = sub_category.strip(), category_is_parent = False)
-                except Category.DoesNotExist:
-                    sub_cat = None
-            
-            
-    #===========================================================================================
-    #   Brands Insertion
-    #===========================================================================================
-
-    if brand is not None:
-        try:
-            brand_insert = Brand(
-                brand_name = brand.strip(),
-            )
-
-            brand_ins = brand_insert.save()
-        except IntegrityError: 
-            brand_ins = Brand.objects.get(brand_name = brand.strip())
-            
-
-    #===========================================================================================
-    #   Brands Insertion
-    #===========================================================================================
-
-    if pe is not None:
-        try:
-            pe_insert = PreviousExhibition(
-                name = pe.strip(),
-            )
-
-            pe_ins = pe_insert.save()
-        except IntegrityError: 
-            pe_ins = PreviousExhibition.objects.get(name = pe.strip())
-    
-    return cat, sub_cat, brand_ins, pe_ins
-
-
-#==========================================================================================
-#   Category, Sub Category & Brand Lists
-#==========================================================================================
-#
-
-def CategoryList():
-    return Category.objects.filter(is_active = True, category_is_parent = True,)
-    
-    
-def SubCategoryList(cate = None):
-    sub_cat = Category.objects.filter(is_active = True, category_is_parent = False,)
-    if cate is not None and len(cate)>0:
-        sub_cat = sub_cat.filter(category_parent_id__in = cate)
-    return sub_cat    
-    
-    
-def BrandList(cat = None, sub_cat = None):    
-    return Brand.objects.filter(is_active = True,).order_by('brand_name')
-    
-
-def PEList():
-    return PreviousExhibition.objects.filter(is_active = True,).order_by('name')
-
-
-
 
 #===========================================================================================
 # RECORDS LIST
@@ -173,20 +74,23 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
     
     if kwargs is not None:
     
-        if kwargs["active"]!='':
+        if kwargs["active"] is not None:
             records = records.filter(is_active = kwargs["active"])
                 
-        if kwargs["assigned"]!='':
+        if kwargs["assigned"] is not None:
             records = records.filter(is_assigned = kwargs["assigned"])
             
-        if kwargs["cate"]!='':
+        if kwargs["cate"] is not None:
             records = records.filter(category_id = kwargs["cate"])
             
-        if kwargs["sub_cat"]!='':
+        if kwargs["sub_cat"] is not None:
             records = records.filter(sub_category_id = kwargs["sub_cat"])
             
-        if kwargs["brand"]!='':
+        if kwargs["brand"] is not None:
             records = records.filter(brand_id = kwargs["brand"])
+
+        if kwargs["search"] is not None:
+            records = records.filter(brand__brand_name__icontains = kwargs["search"])
     
     
     records = records.select_related('category', 'sub_category', 'brand', 'record_file', 'previous_exhibition')
@@ -195,7 +99,6 @@ def RecordsList(page = None, records_per_page = None, file_ins = None, kwargs = 
                 'record_file__record_file_name', 'is_assigned', 'assigned_to', 'assigned_to__first_name', 'assigned_to__last_name' , 
                 'assigned_on', 'is_completed','disposition', 'previous_exhibition__name').order_by('id')
     
-
     per_page = 10
     if records_per_page is not None:
         per_page = records_per_page
